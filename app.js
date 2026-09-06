@@ -3,9 +3,9 @@
   'use strict';
 
   const API = {
-    acoes: '/api/acoes',
-    respostas: '/api/respostas',
-    frentes: '/api/frentes',
+    acoes: 'api/acoes.php',
+    respostas: 'api/respostas.php',
+    frentes: 'api/frentes.php',
   };
 
   // ---------- identificador anônimo da sessão do navegador ----------

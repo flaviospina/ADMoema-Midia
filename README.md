@@ -1,104 +1,121 @@
 # Ministério de Mídia ADMoema
 
-Landing page moderna com a proposta de estruturação e expansão do Ministério de Mídia da
-Assembleia de Deus – Ministério do Belém (Setor 124 · Moema), com formulário das
-**três perguntas para cada integrante** e banco de dados para registro das respostas e das ações
-dos visitantes.
+Landing page com a proposta de estruturação e expansão do Ministério de Mídia da
+Assembleia de Deus – Ministério do Belém (Setor 124 · Moema), com o formulário das
+**três perguntas para cada integrante** e banco de dados que registra as respostas e as
+ações dos visitantes.
+
+Feito para hospedagem compartilhada (HostGator): **PHP + SQLite**, sem instalação, sem
+terminal. Basta subir os arquivos.
+
+## Como publicar na HostGator (sem terminal)
+
+1. **Baixe o pacote** `admoema-midia-hostgator.zip` (está na raiz deste repositório).
+2. Entre no **cPanel → Arquivos → Gerenciador de Arquivos**.
+3. Abra a pasta do seu site (normalmente `public_html`). Se quiser a página em um
+   endereço como `seusite.com.br/midia`, crie a pasta `midia` e entre nela.
+   Se quiser na raiz do domínio, fique em `public_html` mesmo.
+4. Clique em **Upload** e envie o arquivo `.zip`.
+5. Volte ao Gerenciador, clique com o botão direito no `.zip` → **Extract** (extrair) na
+   pasta atual. Depois apague o `.zip`.
+6. Confira que `index.html`, `admin.html`, a pasta `api` e a pasta `dados` ficaram
+   **diretamente** na pasta escolhida (e não dentro de uma subpasta).
+7. Abra o endereço no navegador. Na primeira visita o banco de dados é criado
+   automaticamente em `dados/admoema-midia.sqlite`.
+
+Pronto. A página já está no ar e o formulário já grava no banco.
+
+### Senha do painel
+
+Não é preciso gerar nada. A senha do painel é um texto que fica no arquivo
+`api/config.php`, na linha:
+
+```php
+const SENHA_ADMIN = 'Midia@ADMoema2026';
+```
+
+Ela já vem preenchida com esse valor. **Recomendado:** troque por uma senha sua.
+No Gerenciador de Arquivos, clique com o botão direito em `api/config.php` → **Edit**,
+altere o texto entre aspas e salve.
+
+### Painel administrativo
+
+Acesse `seusite.com.br/midia/admin.html` (ou `/admin.html` na raiz) e informe a senha.
+O painel mostra:
+
+- totais de respostas, visitantes únicos, visitas, formulários iniciados e cliques nas chamadas para ação;
+- as frentes mais marcadas;
+- a tabela com as três respostas de cada integrante e o botão **Baixar respostas (CSV)** (abre no Excel);
+- o registro completo de ações.
+
+## Requisitos na hospedagem
+
+- PHP 7.4 ou superior (a HostGator já oferece 8.x) com a extensão `pdo_sqlite` (padrão).
+- A pasta `dados` precisa ter permissão de escrita (o padrão 755 do cPanel funciona,
+  porque o PHP roda com o seu usuário). Se aparecer "Erro interno", ajuste para 755 ou 775.
+
+### Opcional: usar MySQL em vez de SQLite
+
+Se preferir um banco MySQL, crie o banco e o usuário em **cPanel → Bancos de Dados
+MySQL**, depois em `api/config.php` altere `BANCO_TIPO` para `'mysql'` e preencha
+`MYSQL_HOST`, `MYSQL_BANCO`, `MYSQL_USUARIO` e `MYSQL_SENHA`. As tabelas são criadas
+automaticamente.
 
 ## Conteúdo da página
 
-1. **Início** — título, versículo (Romanos 12:5) e os quatro pilares: Servir · Comunicar · Capacitar · Evangelizar
+1. **Início** — título, Romanos 12:5 e os pilares Servir · Comunicar · Capacitar · Evangelizar
 2. **Nosso propósito** — para que a Palavra seja ouvida, compreendida, registrada, preservada e levada a quem está longe; a quem servimos
-3. **Por que o trabalho de mídia importa** — "ninguém é apenas um operador de equipamento"
-4. **Nove frentes de trabalho** — frentes, não cargos; princípio titular / apoio / aprendiz
+3. **Por que o trabalho de mídia importa**
+4. **Nove frentes de trabalho** — frentes, não cargos; titular, apoio e aprendiz
 5. **Tecnologia a serviço da igreja** — o que já construímos, onde podemos chegar, Central Digital ADMoema + ADMoema Criativo
-6. **Como vamos nos organizar** — plano de 0–30, 30–60 e 60–90 dias e cultura de ministério
-7. **Nossa visão + formulário** — as três perguntas:
+6. **Como vamos nos organizar** — 0–30, 30–60 e 60–90 dias; cultura de ministério
+7. **Nossa visão + formulário** com as três perguntas:
    1. O que você já sabe fazer e poderia compartilhar conosco?
    2. O que você gostaria de aprender dentro da mídia?
    3. Qual projeto gostaria de ajudar a construir?
 
-## Como rodar
-
-Requisitos: Node.js 18 ou superior.
-
-```bash
-npm install
-cp .env.example .env      # ajuste PORT, DB_PATH e ADMIN_TOKEN
-ADMIN_TOKEN=meu-token npm start
-```
-
-Abra <http://localhost:3000>. O banco SQLite é criado automaticamente em `data/admoema-midia.db`
-na primeira execução (ou com `npm run db:init`).
-
-| Comando | O que faz |
-| --- | --- |
-| `npm start` | inicia o servidor |
-| `npm run dev` | inicia com recarga automática (`node --watch`) |
-| `npm run db:init` | cria o banco e as tabelas sem subir o servidor |
-| `npm run db:export` | exporta respostas e ações em CSV para `data/exports/` |
-
-## Painel administrativo
-
-Acesse `/admin` e informe o `ADMIN_TOKEN` definido no ambiente. O painel mostra:
-
-- totais de respostas, visitantes únicos, visitas, formulários iniciados e cliques em chamadas para ação;
-- frentes mais marcadas;
-- tabela de respostas com as três perguntas (com download em CSV);
-- registro completo de ações.
-
 ## Banco de dados
 
-Arquivo: `db/schema.sql` (SQLite, executado de forma idempotente na inicialização).
+Criado automaticamente pelo `api/db.php`.
 
-### Tabela `respostas`
+**Tabela `respostas`** — `id`, `nome`, `contato` (opcional), `frentes` (JSON com as
+frentes marcadas), `sabe_fazer` (pergunta 1), `quer_aprender` (pergunta 2),
+`projeto_ajudar` (pergunta 3), `criado_em`.
 
-| Coluna | Descrição |
-| --- | --- |
-| `id` | identificador |
-| `nome` | nome do integrante |
-| `contato` | WhatsApp ou e-mail (opcional) |
-| `frentes` | JSON com as frentes de interesse marcadas |
-| `sabe_fazer` | pergunta 1 |
-| `quer_aprender` | pergunta 2 |
-| `projeto_ajudar` | pergunta 3 |
-| `criado_em` | data e hora do envio |
+**Tabela `acoes`** (registro de ações) — `id`, `tipo` (`pagina_visitada`, `secao_vista`,
+`cta_clicado`, `formulario_iniciado`, `formulario_enviado`, `formulario_erro`,
+`admin_acesso`), `detalhe` (JSON), `resposta_id`, `sessao` (identificador anônimo do
+navegador), `ip`, `user_agent`, `criado_em`.
 
-### Tabela `acoes` (registro de ações)
-
-| Coluna | Descrição |
-| --- | --- |
-| `id` | identificador |
-| `tipo` | `pagina_visitada`, `secao_vista`, `cta_clicado`, `formulario_iniciado`, `formulario_enviado`, `formulario_erro`, `admin_acesso` |
-| `detalhe` | JSON com informações do evento (seção, origem do clique, frentes etc.) |
-| `resposta_id` | vínculo com a resposta, quando a ação for um envio de formulário |
-| `sessao` | identificador anônimo do navegador |
-| `ip`, `user_agent` | origem da requisição |
-| `criado_em` | data e hora |
+As datas usam o fuso `America/Sao_Paulo` (ajustável em `api/config.php`).
 
 ## API
 
-| Método e rota | Descrição |
+| Rota | Descrição |
 | --- | --- |
-| `GET /api/health` | verificação de saúde |
-| `GET /api/frentes` | lista das nove frentes |
-| `POST /api/acoes` | registra uma ação do navegador (`{ tipo, detalhe, sessao }`) |
-| `POST /api/respostas` | envia o formulário (`{ nome, contato, frentes[], sabeFazer, querAprender, projetoAjudar, sessao }`) |
-| `GET /api/admin/respostas` | lista respostas (cabeçalho `x-admin-token`) |
-| `GET /api/admin/acoes?tipo=` | lista ações (cabeçalho `x-admin-token`) |
-| `GET /api/admin/resumo` | totais e frentes mais marcadas (cabeçalho `x-admin-token`) |
+| `GET api/frentes.php` | lista das nove frentes |
+| `POST api/acoes.php` | registra uma ação do navegador |
+| `POST api/respostas.php` | envia o formulário |
+| `GET api/admin.php?recurso=respostas` | lista respostas (cabeçalho `X-Senha-Admin`) |
+| `GET api/admin.php?recurso=acoes` | lista ações (cabeçalho `X-Senha-Admin`) |
+| `GET api/admin.php?recurso=resumo` | totais e frentes mais marcadas |
+| `GET api/admin.php?recurso=csv&senha=...` | download das respostas em CSV |
 
 ## Estrutura
 
 ```
-server.js          servidor Express e rotas da API
-db/schema.sql      definição das tabelas
-db/database.js     acesso ao SQLite (better-sqlite3)
-db/init.js         cria o banco
-db/export.js       exporta CSV
-public/index.html  landing page
-public/styles.css  estilos
-public/app.js      interações, formulário e registro de ações
-public/admin.html  painel administrativo
-data/              arquivo do banco (ignorado pelo git)
+index.html        landing page
+styles.css        estilos
+app.js            interações, formulário e registro de ações
+admin.html        painel administrativo
+api/config.php    senha do painel e banco (único arquivo a ajustar)
+api/db.php        conexão e criação das tabelas
+api/*.php         rotas da API
+dados/            banco SQLite (protegido por .htaccess)
+.htaccess         configurações do Apache
 ```
+
+## Testar no computador (opcional)
+
+Com PHP instalado: `php -S localhost:8000` na pasta do projeto e abra
+<http://localhost:8000>.

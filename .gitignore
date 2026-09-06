@@ -1,7 +1,8 @@
+# banco de dados criado em produção
+dados/*.sqlite
+dados/*.sqlite-journal
+dados/*.sqlite-wal
+dados/*.sqlite-shm
+# ambiente local
 node_modules/
-data/*.db
-data/*.db-journal
-data/*.db-wal
-data/*.db-shm
-data/exports/
 .env

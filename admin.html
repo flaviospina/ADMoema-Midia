@@ -56,8 +56,8 @@
   <main>
     <section class="login" id="login">
       <h2>Acesso restrito</h2>
-      <p>Informe o token de administração configurado no servidor (variável <code>ADMIN_TOKEN</code>).</p>
-      <label for="token">Token</label>
+      <p>Informe a senha do painel definida em <code>api/config.php</code> (constante <code>SENHA_ADMIN</code>).</p>
+      <label for="token">Senha</label>
       <input type="password" id="token" autocomplete="current-password">
       <p class="erro" id="login-erro"></p>
       <button id="btn-entrar">Entrar</button>
@@ -77,20 +77,20 @@
   <script>
     (function () {
       const $ = (s) => document.querySelector(s);
-      let token = sessionStorage.getItem('admoema_admin_token') || '';
+      let token = sessionStorage.getItem('admoema_admin_senha') || '';
       let aba = 'respostas';
       let cache = { respostas: [], acoes: [], resumo: null };
 
       async function api(caminho) {
-        const r = await fetch(caminho, { headers: { 'x-admin-token': token } });
-        if (r.status === 401 || r.status === 503) throw new Error((await r.json()).erro || 'Não autorizado');
+        const r = await fetch(caminho, { headers: { 'X-Senha-Admin': token } });
+        if (!r.ok) { let m = 'Falha ao consultar o servidor (' + r.status + ').'; try { m = (await r.json()).erro || m; } catch (_) {} throw new Error(m); }
         return r.json();
       }
 
       function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
       async function carregar() {
-        const [r, a, s] = await Promise.all([api('/api/admin/respostas'), api('/api/admin/acoes'), api('/api/admin/resumo')]);
+        const [r, a, s] = await Promise.all([api('api/admin.php?recurso=respostas'), api('api/admin.php?recurso=acoes'), api('api/admin.php?recurso=resumo')]);
         cache = { respostas: r.respostas, acoes: a.acoes, resumo: s.resumo };
         renderizar();
       }
@@ -135,12 +135,7 @@
       }
 
       function csv() {
-        const cols = ['id', 'criado_em', 'nome', 'contato', 'frentes', 'sabe_fazer', 'quer_aprender', 'projeto_ajudar'];
-        const e = (v) => { const s = Array.isArray(v) ? v.join(', ') : String(v ?? ''); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-        const linhas = [cols.join(';'), ...cache.respostas.map((r) => cols.map((c) => e(r[c])).join(';'))];
-        const blob = new Blob(['﻿' + linhas.join('\n')], { type: 'text/csv;charset=utf-8' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'respostas-midia-admoema.csv'; a.click();
-        URL.revokeObjectURL(a.href);
+        location.href = 'api/admin.php?recurso=csv&senha=' + encodeURIComponent(token);
       }
 
       async function entrar() {
@@ -148,7 +143,7 @@
         $('#login-erro').textContent = '';
         try {
           await carregar();
-          sessionStorage.setItem('admoema_admin_token', token);
+          sessionStorage.setItem('admoema_admin_senha', token);
           $('#login').hidden = true; $('#painel').hidden = false; $('#acoes-topo').hidden = false;
         } catch (err) { $('#login-erro').textContent = err.message; }
       }
@@ -157,7 +152,7 @@
       $('#token').addEventListener('keydown', (e) => { if (e.key === 'Enter') entrar(); });
       $('#btn-atualizar').addEventListener('click', () => carregar().catch((e) => alert(e.message)));
       $('#btn-csv').addEventListener('click', csv);
-      $('#btn-sair').addEventListener('click', () => { sessionStorage.removeItem('admoema_admin_token'); location.reload(); });
+      $('#btn-sair').addEventListener('click', () => { sessionStorage.removeItem('admoema_admin_senha'); location.reload(); });
       document.querySelectorAll('.abas button').forEach((b) => b.addEventListener('click', () => {
         aba = b.dataset.aba; document.querySelectorAll('.abas button').forEach((x) => x.classList.toggle('ativa', x === b)); renderizar();
       }));

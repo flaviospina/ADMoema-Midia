@@ -1,0 +1,8 @@
+# Pasta do banco de dados: bloqueada para acesso pelo navegador
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order deny,allow
+  Deny from all
+</IfModule>
