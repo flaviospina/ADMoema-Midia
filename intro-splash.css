@@ -1,0 +1,69 @@
+/* Abertura com logo — gerado por logo-motion (receita: draw) */
+/* logo-motion · base compartilhada por todas as receitas
+   Variáveis: --bg --accent --fg --k (tempo) --ls (tamanho da logo em vmin)
+              --title-size (vmin) --t-title --t-sub --t-line (instantes do texto) --font */
+.intro{--ease:cubic-bezier(.2,.7,.2,1);--k:1;--ls:34;--title-size:5;
+  position:relative;width:100%;height:100%;min-height:100vh;display:grid;place-items:center;overflow:hidden;
+  background:var(--bg,#0b1f3a);color:var(--fg,#fff);font-family:var(--font,'Manrope'),system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;isolation:isolate}
+.intro::before{content:"";position:absolute;inset:0;background:var(--bg-image,none) center/cover no-repeat;opacity:.35;z-index:-2}
+.intro__flare{position:absolute;left:50%;top:50%;width:120vmin;height:120vmin;transform:translate(-50%,-50%) scale(.6);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent) 28%,transparent) 0%,transparent 60%);
+  opacity:0;animation:lm-flare calc(2.2s*var(--k)) var(--ease) forwards}
+@keyframes lm-flare{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.intro__stage{display:grid;justify-items:center;gap:calc(var(--ls)*.12vmin);padding:4vmin;text-align:center}
+.intro__logo{position:relative;width:calc(var(--ls)*1vmin);height:calc(var(--ls)*1vmin);display:grid;place-items:center;will-change:transform,opacity}
+.intro__logo>svg,.intro__logo>img{width:100%;height:100%;object-fit:contain;display:block;overflow:visible}
+.intro__lockup{display:flex;align-items:center;justify-content:center;gap:5vmin;--gap:5vmin}
+.intro--empilhado .intro__lockup{flex-direction:column;gap:4vmin;--gap:4vmin}
+.intro__divider{width:2px;height:calc(var(--ls)*.7vmin);background:linear-gradient(transparent,var(--accent),transparent);opacity:0;transform:scaleY(0)}
+.intro--empilhado .intro__divider{width:calc(var(--ls)*.7vmin);height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);transform:scaleX(0)}
+.intro__text{display:grid;gap:.6vmin;max-width:90vw}
+.intro__title{margin:0;font-weight:700;letter-spacing:-.01em;line-height:1.1;font-size:clamp(1.5rem,calc(var(--title-size)*1vmin),6.5rem)}
+.intro__title .w{display:inline-block;opacity:0;transform:translateY(.5em);filter:blur(6px);
+  animation:lm-word calc(.7s*var(--k)) var(--ease) calc((var(--t-title,.6s) + var(--i,0)*.08s)*var(--k)) forwards}
+@keyframes lm-word{to{opacity:1;transform:none;filter:blur(0)}}
+.intro__subtitle{margin:0;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(.7rem,1.7vmin,1.1rem);color:var(--accent);opacity:0;
+  animation:lm-fade calc(.8s*var(--k)) var(--ease) calc(var(--t-sub,1s)*var(--k)) forwards}
+@keyframes lm-fade{to{opacity:1}}
+.intro__text::after{content:"";justify-self:center;width:8vmin;height:2px;margin-top:1vmin;border-radius:2px;background:var(--accent);transform:scaleX(0);
+  animation:lm-line calc(.7s*var(--k)) var(--ease) calc(var(--t-line,1.2s)*var(--k)) forwards}
+@keyframes lm-line{to{transform:scaleX(1)}}
+.intro__text:empty,.intro__text:empty::after{display:none}
+/* acessibilidade: sem movimento, só o estado final */
+@media (prefers-reduced-motion:reduce){
+  .intro *,.intro::after,.intro *::after,.intro *::before{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
+}
+
+/* receita draw · logo desenhada traço a traço (SVG)
+   build_intro.js marca cada forma como draw--f (tem preenchimento) ou draw--s (só traço). */
+[data-recipe="draw"] .intro__logo--a{opacity:0;transform:scale(.96);animation:lm-in calc(.6s*var(--k)) var(--ease) forwards}
+@keyframes lm-in{to{opacity:1;transform:none}}
+[data-recipe="draw"] .draw{stroke-dasharray:1;stroke-dashoffset:1;stroke-linecap:round;stroke-linejoin:round}
+/* só traço: desenha na própria cor e fica */
+[data-recipe="draw"] .draw--s{animation:lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards}
+/* com preenchimento: contorno na cor de destaque, depois o preenchimento surge e o contorno some */
+[data-recipe="draw"] .draw--f{fill-opacity:0;stroke:var(--draw-stroke,var(--accent));stroke-width:var(--stroke-width,2);vector-effect:non-scaling-stroke;
+  animation:
+    lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards,
+    lm-fill calc(.9s*var(--k)) ease-out calc((1.4s + var(--i,0)*.04s)*var(--k)) forwards,
+    lm-stroke-out calc(.8s*var(--k)) ease-out calc((2.2s + var(--i,0)*.04s)*var(--k)) forwards}
+[data-recipe="draw"].intro--sem-preenchimento .draw--f{animation:lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards}
+[data-recipe="draw"].intro--manter-traco .draw--f{animation:
+    lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards,
+    lm-fill calc(.9s*var(--k)) ease-out calc((1.4s + var(--i,0)*.04s)*var(--k)) forwards}
+@keyframes lm-draw{to{stroke-dashoffset:0}}
+@keyframes lm-fill{to{fill-opacity:1}}
+@keyframes lm-stroke-out{to{stroke-opacity:0}}
+
+/* abertura do site (splash) · complementa base.css + receita */
+.intro-splash,#intro-splash{position:fixed;inset:0;z-index:9999;min-height:100dvh}
+html.intro-ativo{overflow:hidden}
+#intro-splash.saindo{animation:lm-out .6s cubic-bezier(.4,0,1,1) forwards;pointer-events:none}
+@keyframes lm-out{to{opacity:0;transform:scale(1.04)}}
+.intro__pular{position:absolute;right:max(1.25rem,env(safe-area-inset-right));bottom:max(1.25rem,env(safe-area-inset-bottom));
+  padding:.6rem 1.1rem;border-radius:999px;border:1px solid color-mix(in srgb,var(--fg) 35%,transparent);background:transparent;color:var(--fg);
+  font:600 .85rem/1 inherit;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:0;transition:opacity .4s,background .2s}
+.intro--pode-pular .intro__pular{opacity:.8}
+.intro__pular:hover,.intro__pular:focus-visible{opacity:1;background:color-mix(in srgb,var(--fg) 12%,transparent);outline:none}
+@media (prefers-reduced-motion:reduce){#intro-splash{display:none}}

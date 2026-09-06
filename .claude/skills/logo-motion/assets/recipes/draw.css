@@ -1,0 +1,20 @@
+/* receita draw · logo desenhada traço a traço (SVG)
+   build_intro.js marca cada forma como draw--f (tem preenchimento) ou draw--s (só traço). */
+[data-recipe="draw"] .intro__logo--a{opacity:0;transform:scale(.96);animation:lm-in calc(.6s*var(--k)) var(--ease) forwards}
+@keyframes lm-in{to{opacity:1;transform:none}}
+[data-recipe="draw"] .draw{stroke-dasharray:1;stroke-dashoffset:1;stroke-linecap:round;stroke-linejoin:round}
+/* só traço: desenha na própria cor e fica */
+[data-recipe="draw"] .draw--s{animation:lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards}
+/* com preenchimento: contorno na cor de destaque, depois o preenchimento surge e o contorno some */
+[data-recipe="draw"] .draw--f{fill-opacity:0;stroke:var(--draw-stroke,var(--accent));stroke-width:var(--stroke-width,2);vector-effect:non-scaling-stroke;
+  animation:
+    lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards,
+    lm-fill calc(.9s*var(--k)) ease-out calc((1.4s + var(--i,0)*.04s)*var(--k)) forwards,
+    lm-stroke-out calc(.8s*var(--k)) ease-out calc((2.2s + var(--i,0)*.04s)*var(--k)) forwards}
+[data-recipe="draw"].intro--sem-preenchimento .draw--f{animation:lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards}
+[data-recipe="draw"].intro--manter-traco .draw--f{animation:
+    lm-draw calc(1.6s*var(--k)) cubic-bezier(.65,0,.35,1) calc(var(--i,0)*.04s*var(--k)) forwards,
+    lm-fill calc(.9s*var(--k)) ease-out calc((1.4s + var(--i,0)*.04s)*var(--k)) forwards}
+@keyframes lm-draw{to{stroke-dashoffset:0}}
+@keyframes lm-fill{to{fill-opacity:1}}
+@keyframes lm-stroke-out{to{stroke-opacity:0}}

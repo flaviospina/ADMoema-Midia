@@ -86,6 +86,12 @@ p:last-child { margin-bottom: 0; }
 }
 .topo__inner { display: flex; align-items: center; gap: 1.5rem; min-height: 68px; }
 .marca { display: inline-flex; align-items: center; gap: .65rem; font-weight: 600; letter-spacing: .01em; }
+.marca__logo { position: relative; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--navy-800); overflow: hidden; transition: transform .4s var(--transicao); }
+.marca__logo img { width: 30px; height: 30px; }
+.marca__logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, .5) 50%, transparent 60%); transform: translateX(-130%); }
+.marca:hover .marca__logo { transform: rotate(-6deg) scale(1.06); }
+.marca:hover .marca__logo::after { animation: brilho-logo .6s ease-in-out; }
+@keyframes brilho-logo { to { transform: translateX(130%); } }
 .marca__texto { font-size: 1.05rem; }
 .marca__texto strong { color: var(--ouro-400); font-weight: 800; }
 .nav { display: flex; gap: 1.6rem; margin-left: auto; font-size: .95rem; font-weight: 600; color: rgba(255, 255, 255, .78); }
@@ -305,6 +311,8 @@ fieldset.campo { border: 0; padding: 0; margin-inline: 0; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .hero__glow, .hero__scroll span { animation: none; }
+  .marca:hover .marca__logo { transform: none; }
+  .marca__logo::after { display: none; }
 }
 
 /* ---------- responsivo ---------- */

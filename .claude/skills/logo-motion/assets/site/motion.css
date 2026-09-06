@@ -1,0 +1,46 @@
+/* logo-motion · micro-interações e animações de rolagem para o site
+   Ajuste as variáveis ao tema do site. Só transform/opacity/clip-path. */
+:root{--lm-ease:cubic-bezier(.2,.7,.2,1);--lm-accent:#d4a72c}
+
+/* cabeçalho: logo com brilho e leve giro ao passar o mouse */
+.marca__logo,.logo-site{position:relative;display:inline-grid;overflow:hidden;border-radius:12px;transition:transform .4s var(--lm-ease)}
+.marca:hover .marca__logo,.logo-site:hover{transform:rotate(-6deg) scale(1.06)}
+.marca__logo::after,.logo-site::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-130%)}
+.marca:hover .marca__logo::after,.logo-site:hover::after{animation:lm-glint .6s ease-in-out}
+@keyframes lm-glint{to{transform:translateX(130%)}}
+
+/* cabeçalho compacto depois de rolar (motion.js adiciona .topo--compacto) */
+.topo{transition:background .3s,box-shadow .3s,padding .3s}
+.topo--compacto{box-shadow:0 8px 30px -18px rgba(0,0,0,.6)}
+.topo--compacto .topo__inner{min-height:56px}
+
+/* botões: reflexo passando */
+.btn--brilho{position:relative;overflow:hidden}
+.btn--brilho::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.45) 50%,transparent 60%);transform:translateX(-130%);transition:none}
+.btn--brilho:hover::after{animation:lm-glint .7s ease-in-out}
+
+/* entrada na rolagem (motion.js adiciona .visivel) */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s var(--lm-ease)}
+.reveal--left{transform:translateX(-32px)}
+.reveal--right{transform:translateX(32px)}
+.reveal--scale{transform:scale(.94)}
+.reveal.visivel{opacity:1;transform:none}
+[data-stagger]>.reveal:nth-child(2){transition-delay:.08s}
+[data-stagger]>.reveal:nth-child(3){transition-delay:.16s}
+[data-stagger]>.reveal:nth-child(4){transition-delay:.24s}
+[data-stagger]>.reveal:nth-child(5){transition-delay:.32s}
+[data-stagger]>.reveal:nth-child(6){transition-delay:.40s}
+[data-stagger]>.reveal:nth-child(n+7){transition-delay:.48s}
+/* elementos que entram de lado não podem gerar rolagem horizontal */
+.secao,section{overflow-x:clip}
+
+/* SVG inline que se desenha ao entrar (dê pathLength="1" aos caminhos) */
+.reveal--draw path,.reveal--draw circle,.reveal--draw line,.reveal--draw polyline,.reveal--draw polygon,.reveal--draw rect{
+  stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.4s cubic-bezier(.65,0,.35,1)}
+.reveal--draw.visivel path,.reveal--draw.visivel circle,.reveal--draw.visivel line,.reveal--draw.visivel polyline,.reveal--draw.visivel polygon,.reveal--draw.visivel rect{stroke-dashoffset:0}
+
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .marca:hover .marca__logo,.logo-site:hover{transform:none}
+  .marca__logo::after,.logo-site::after,.btn--brilho::after{display:none}
+}

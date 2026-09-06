@@ -1,0 +1,14 @@
+/* receita dual · duas logos em sequência, termina em lockup (qualquer arquivo)
+   A logo A começa deslocada para o centro da tela e desliza para o lugar quando B entra. */
+[data-recipe="dual"] .intro__lockup{--sx:calc(var(--ls)*.5vmin + var(--gap) + 1px);--sy:0px}
+[data-recipe="dual"].intro--empilhado .intro__lockup{--sx:0px;--sy:calc(var(--ls)*.5vmin + var(--gap) + 1px)}
+[data-recipe="dual"] .intro__logo--a{opacity:0;transform:translate(var(--sx),calc(var(--sy) + 24px)) scale(.92);filter:blur(10px);
+  animation:lm-rise-a calc(1.1s*var(--k)) var(--ease) forwards,lm-shift calc(1s*var(--k)) var(--ease) calc(2.2s*var(--k)) forwards}
+@keyframes lm-rise-a{to{opacity:1;transform:translate(var(--sx),var(--sy)) scale(1);filter:blur(0)}}
+@keyframes lm-shift{from{transform:translate(var(--sx),var(--sy))}to{transform:translate(0,0)}}
+[data-recipe="dual"] .intro__divider{animation:lm-grow calc(.6s*var(--k)) var(--ease) calc(2.5s*var(--k)) forwards}
+@keyframes lm-grow{to{opacity:1;transform:none}}
+[data-recipe="dual"] .intro__logo--b{opacity:0;transform:translateX(40px);filter:blur(8px);
+  animation:lm-enter-b calc(.9s*var(--k)) var(--ease) calc(2.6s*var(--k)) forwards}
+[data-recipe="dual"].intro--empilhado .intro__logo--b{transform:translateY(40px)}
+@keyframes lm-enter-b{to{opacity:1;transform:none;filter:blur(0)}}

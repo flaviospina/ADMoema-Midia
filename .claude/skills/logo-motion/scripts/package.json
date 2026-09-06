@@ -1,0 +1,9 @@
+{
+  "name": "logo-motion-scripts",
+  "private": true,
+  "description": "Dependências opcionais dos scripts da skill logo-motion (só para renderizar vídeo)",
+  "dependencies": {
+    "playwright-core": "^1.50.0",
+    "ffmpeg-static": "^5.2.0"
+  }
+}

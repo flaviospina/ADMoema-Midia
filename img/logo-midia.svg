@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- LOGO PROVISÓRIA do Ministério de Mídia ADMoema. Substitua por logo-midia.svg oficial (mesmo nome de arquivo). -->
+  <circle cx="100" cy="100" r="88" stroke="#d4a72c" stroke-width="6"/>
+  <path d="M52 140 100 48l48 92" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M74 112h52" stroke="#d4a72c" stroke-width="10" stroke-linecap="round"/>
+  <path d="M100 150v18M84 156v8M116 156v8M68 160v3M132 160v3" stroke="#d4a72c" stroke-width="6" stroke-linecap="round"/>
+</svg>

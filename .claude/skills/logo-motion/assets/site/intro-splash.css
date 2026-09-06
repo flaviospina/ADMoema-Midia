@@ -1,0 +1,11 @@
+/* abertura do site (splash) · complementa base.css + receita */
+.intro-splash,#intro-splash{position:fixed;inset:0;z-index:9999;min-height:100dvh}
+html.intro-ativo{overflow:hidden}
+#intro-splash.saindo{animation:lm-out .6s cubic-bezier(.4,0,1,1) forwards;pointer-events:none}
+@keyframes lm-out{to{opacity:0;transform:scale(1.04)}}
+.intro__pular{position:absolute;right:max(1.25rem,env(safe-area-inset-right));bottom:max(1.25rem,env(safe-area-inset-bottom));
+  padding:.6rem 1.1rem;border-radius:999px;border:1px solid color-mix(in srgb,var(--fg) 35%,transparent);background:transparent;color:var(--fg);
+  font:600 .85rem/1 inherit;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:0;transition:opacity .4s,background .2s}
+.intro--pode-pular .intro__pular{opacity:.8}
+.intro__pular:hover,.intro__pular:focus-visible{opacity:1;background:color-mix(in srgb,var(--fg) 12%,transparent);outline:none}
+@media (prefers-reduced-motion:reduce){#intro-splash{display:none}}

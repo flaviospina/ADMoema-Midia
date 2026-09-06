@@ -9,17 +9,34 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="intro-splash.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1f3a'/%3E%3Cpath d='M20 44 32 18l12 26M25 36h14' stroke='%23d4a72c' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 </head>
 <body>
 
+  <!-- Abertura animada (logo-motion). Para regenerar com a logo oficial: veja README, seção "Animação da logo". -->
+<div id="intro-splash" class="intro" data-recipe="draw" data-direction="left" data-duration="2.72" data-hold="0.5" style="--bg:#0b1f3a;--accent:#d4a72c;--fg:#ffffff;--k:0.85;--ls:30;--title-size:4.2;--stroke-width:2;--t-title:2s;--t-sub:2.4s;--t-line:2.6s;--font:'Manrope'" role="img" aria-label="Ministério de Mídia ADMoema — Assembleia de Deus · Ministério do Belém · Setor 124">
+  <div class="intro__flare"></div>
+  <div class="intro__stage">
+    <div class="intro__logo intro__logo--a" style="--logo-mask:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiBmaWxsPSJub25lIj4KICAKICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9Ijg4IiBzdHJva2U9IiNkNGE3MmMiIHN0cm9rZS13aWR0aD0iNiIvPgogIDxwYXRoIGQ9Ik01MiAxNDAgMTAwIDQ4bDQ4IDkyIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik03NCAxMTJoNTIiIHN0cm9rZT0iI2Q0YTcyYyIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTEwMCAxNTB2MThNODQgMTU2djhNMTE2IDE1NnY4TTY4IDE2MHYzTTEzMiAxNjB2MyIgc3Ryb2tlPSIjZDRhNzJjIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4=')"><svg class="logo-svg" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  
+  <circle cx="100" cy="100" r="88" stroke="#d4a72c" stroke-width="6" pathLength="1" class="draw draw--s" style="--i:0"/>
+  <path d="M52 140 100 48l48 92" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" pathLength="1" class="draw draw--s" style="--i:1"/>
+  <path d="M74 112h52" stroke="#d4a72c" stroke-width="10" stroke-linecap="round" pathLength="1" class="draw draw--s" style="--i:2"/>
+  <path d="M100 150v18M84 156v8M116 156v8M68 160v3M132 160v3" stroke="#d4a72c" stroke-width="6" stroke-linecap="round" pathLength="1" class="draw draw--s" style="--i:3"/>
+</svg></div>
+    <div class="intro__text"><h1 class="intro__title"><span class="w" style="--i:0">Ministério</span> <span class="w" style="--i:1">de</span> <span class="w" style="--i:2">Mídia</span> <span class="w" style="--i:3">ADMoema</span></h1><p class="intro__subtitle">Assembleia de Deus · Ministério do Belém · Setor 124</p></div>
+  </div>
+  <button type="button" class="intro__pular" aria-label="Pular abertura">Pular</button>
+</div>
+<script>try{if(sessionStorage.getItem('intro-visto')){var _i=document.getElementById('intro-splash');_i&&_i.parentNode.removeChild(_i)}}catch(e){}</script>
+
+
   <header class="topo" id="topo">
     <div class="container topo__inner">
       <a href="#inicio" class="marca" aria-label="Ministério de Mídia ADMoema">
-        <span class="marca__logo" aria-hidden="true">
-          <svg viewBox="0 0 64 64" width="36" height="36"><rect width="64" height="64" rx="14" fill="#0b1f3a"/><path d="M20 44 32 18l12 26M25 36h14" stroke="#d4a72c" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
+        <span class="marca__logo" aria-hidden="true"><img src="img/logo-midia.svg" alt="" width="36" height="36"></span>
         <span class="marca__texto"><strong>Mídia</strong> ADMoema</span>
       </a>
       <nav class="nav" aria-label="Seções da página">
@@ -421,6 +438,7 @@
     </div>
   </footer>
 
+  <script src="intro-splash.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

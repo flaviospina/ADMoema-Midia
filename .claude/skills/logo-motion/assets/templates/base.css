@@ -1,0 +1,35 @@
+/* logo-motion · base compartilhada por todas as receitas
+   Variáveis: --bg --accent --fg --k (tempo) --ls (tamanho da logo em vmin)
+              --title-size (vmin) --t-title --t-sub --t-line (instantes do texto) --font */
+.intro{--ease:cubic-bezier(.2,.7,.2,1);--k:1;--ls:34;--title-size:5;
+  position:relative;width:100%;height:100%;min-height:100vh;display:grid;place-items:center;overflow:hidden;
+  background:var(--bg,#0b1f3a);color:var(--fg,#fff);font-family:var(--font,'Manrope'),system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;isolation:isolate}
+.intro::before{content:"";position:absolute;inset:0;background:var(--bg-image,none) center/cover no-repeat;opacity:.35;z-index:-2}
+.intro__flare{position:absolute;left:50%;top:50%;width:120vmin;height:120vmin;transform:translate(-50%,-50%) scale(.6);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent) 28%,transparent) 0%,transparent 60%);
+  opacity:0;animation:lm-flare calc(2.2s*var(--k)) var(--ease) forwards}
+@keyframes lm-flare{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.intro__stage{display:grid;justify-items:center;gap:calc(var(--ls)*.12vmin);padding:4vmin;text-align:center}
+.intro__logo{position:relative;width:calc(var(--ls)*1vmin);height:calc(var(--ls)*1vmin);display:grid;place-items:center;will-change:transform,opacity}
+.intro__logo>svg,.intro__logo>img{width:100%;height:100%;object-fit:contain;display:block;overflow:visible}
+.intro__lockup{display:flex;align-items:center;justify-content:center;gap:5vmin;--gap:5vmin}
+.intro--empilhado .intro__lockup{flex-direction:column;gap:4vmin;--gap:4vmin}
+.intro__divider{width:2px;height:calc(var(--ls)*.7vmin);background:linear-gradient(transparent,var(--accent),transparent);opacity:0;transform:scaleY(0)}
+.intro--empilhado .intro__divider{width:calc(var(--ls)*.7vmin);height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);transform:scaleX(0)}
+.intro__text{display:grid;gap:.6vmin;max-width:90vw}
+.intro__title{margin:0;font-weight:700;letter-spacing:-.01em;line-height:1.1;font-size:clamp(1.5rem,calc(var(--title-size)*1vmin),6.5rem)}
+.intro__title .w{display:inline-block;opacity:0;transform:translateY(.5em);filter:blur(6px);
+  animation:lm-word calc(.7s*var(--k)) var(--ease) calc((var(--t-title,.6s) + var(--i,0)*.08s)*var(--k)) forwards}
+@keyframes lm-word{to{opacity:1;transform:none;filter:blur(0)}}
+.intro__subtitle{margin:0;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(.7rem,1.7vmin,1.1rem);color:var(--accent);opacity:0;
+  animation:lm-fade calc(.8s*var(--k)) var(--ease) calc(var(--t-sub,1s)*var(--k)) forwards}
+@keyframes lm-fade{to{opacity:1}}
+.intro__text::after{content:"";justify-self:center;width:8vmin;height:2px;margin-top:1vmin;border-radius:2px;background:var(--accent);transform:scaleX(0);
+  animation:lm-line calc(.7s*var(--k)) var(--ease) calc(var(--t-line,1.2s)*var(--k)) forwards}
+@keyframes lm-line{to{transform:scaleX(1)}}
+.intro__text:empty,.intro__text:empty::after{display:none}
+/* acessibilidade: sem movimento, só o estado final */
+@media (prefers-reduced-motion:reduce){
+  .intro *,.intro::after,.intro *::after,.intro *::before{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
+}

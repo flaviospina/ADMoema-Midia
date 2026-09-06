@@ -1,0 +1,11 @@
+/* receita flip · giro 3D com reflexo (qualquer arquivo) */
+[data-recipe="flip"] .intro__stage{perspective:900px}
+[data-recipe="flip"] .intro__logo--a{opacity:0;transform:rotateY(90deg) scale(.9);transform-style:preserve-3d;
+  animation:lm-flip calc(1.2s*var(--k)) var(--ease) forwards}
+@keyframes lm-flip{60%{opacity:1}to{opacity:1;transform:rotateY(0) scale(1)}}
+[data-recipe="flip"] .intro__logo--a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.7) 50%,transparent 58%) no-repeat;background-size:300% 100%;background-position:150% 0;-webkit-mask:var(--logo-mask) center/contain no-repeat;mask:var(--logo-mask) center/contain no-repeat;animation:lm-beam calc(.7s*var(--k)) ease-in-out calc(.95s*var(--k)) forwards}
+@keyframes lm-beam{to{background-position:-150% 0}}}
+[data-recipe="flip"] .intro__logo--a::before{content:"";position:absolute;left:10%;right:10%;bottom:-14%;height:10%;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,0,0,.55),transparent 70%);opacity:0;transform:scaleX(.4);
+  animation:lm-shadow calc(1.2s*var(--k)) var(--ease) calc(.2s*var(--k)) forwards}
+@keyframes lm-shadow{to{opacity:1;transform:scaleX(1)}}

@@ -1,0 +1,4 @@
+/* receita rise · subida suave com desfoque (qualquer arquivo) */
+[data-recipe="rise"] .intro__logo--a{opacity:0;transform:translateY(24px) scale(.92);filter:blur(10px);
+  animation:lm-rise calc(1.1s*var(--k)) var(--ease) forwards}
+@keyframes lm-rise{to{opacity:1;transform:none;filter:blur(0)}}

@@ -1,0 +1,14 @@
+/* receita glow · pulso luminoso em loop (qualquer arquivo) */
+[data-recipe="glow"] .intro__logo--a{opacity:0;transform:scale(.94);filter:blur(6px);animation:lm-rise calc(.8s*var(--k)) var(--ease) forwards}
+@keyframes lm-rise{to{opacity:1;transform:none;filter:blur(0)}}
+[data-recipe="glow"] .intro__logo--a::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--accent);
+  -webkit-mask:var(--logo-mask) center/contain no-repeat;mask:var(--logo-mask) center/contain no-repeat;
+  filter:blur(18px);opacity:.35;transform:scale(1.04);
+  animation:lm-pulse calc(4s*var(--k)) ease-in-out calc(.8s*var(--k)) infinite}
+@keyframes lm-pulse{50%{opacity:.85;transform:scale(1.08)}}
+[data-recipe="glow"] .intro__logo--a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.6) 50%,transparent 58%) no-repeat;background-size:300% 100%;background-position:150% 0;-webkit-mask:var(--logo-mask) center/contain no-repeat;mask:var(--logo-mask) center/contain no-repeat;animation:lm-shimmer calc(4s*var(--k)) ease-in-out calc(1.2s*var(--k)) infinite}
+@keyframes lm-shimmer{0%{background-position:150% 0}30%,100%{background-position:-150% 0}}30%,100%{transform:translateX(130%)}}
+[data-recipe="glow"] .intro__flare{animation:lm-flare calc(2.2s*var(--k)) var(--ease) forwards,lm-breathe calc(4s*var(--k)) ease-in-out calc(2.2s*var(--k)) infinite}
+@keyframes lm-breathe{50%{opacity:.6}}
+[data-recipe="glow"] .intro__title{animation:lm-breathe-text calc(4s*var(--k)) ease-in-out calc(1.4s*var(--k)) infinite}
+@keyframes lm-breathe-text{50%{opacity:.75}}40%,100%{background-position:-100% 0}}

@@ -61,6 +61,29 @@ MySQL**, depois em `api/config.php` altere `BANCO_TIPO` para `'mysql'` e preench
 `MYSQL_HOST`, `MYSQL_BANCO`, `MYSQL_USUARIO` e `MYSQL_SENHA`. As tabelas são criadas
 automaticamente.
 
+## Animação da logo (skill `logo-motion`)
+
+O site abre com uma **animação da logo** (arquivo `intro-splash.css` + `intro-splash.js` e um
+trecho no início do `index.html`). Ela roda uma vez por aba, tem botão "Pular", fecha com
+`Esc` e é desligada para quem prefere menos movimento no sistema.
+
+A logo atual (`img/logo-midia.svg`) é **provisória**. Para usar as logos oficiais:
+
+1. Envie o arquivo da logo do Ministério de Mídia (de preferência em **SVG**; PNG com fundo
+   transparente também serve) e o da Assembleia de Deus – Ministério do Belém.
+2. Peça: "anime as logos com a skill logo-motion e atualize a abertura do site". A skill
+   está na pasta `.claude/skills/logo-motion` deste repositório (e pode ser salva no seu
+   perfil pelo arquivo `logo-motion.skill`).
+3. Para trocar só a logo do cabeçalho, substitua `img/logo-midia.svg` mantendo o nome.
+
+A mesma skill gera **vídeo** da animação (MP4, WebM com fundo transparente para OBS/vMix,
+GIF) para transmissão, telão e redes. Um exemplo com a logo provisória está em
+`img/vinheta-exemplo.mp4`.
+
+Receitas disponíveis: `draw` (logo desenhada traço a traço), `reveal` (cortina com feixe de
+luz), `rise` (entrada suave), `flip` (giro 3D), `glow` (brilho em loop para tela de espera)
+e `dual` (duas logos em sequência, terminando lado a lado, ideal para Mídia + AD).
+
 ## Conteúdo da página
 
 1. **Início** — título, Romanos 12:5 e os pilares Servir · Comunicar · Capacitar · Evangelizar
@@ -104,7 +127,10 @@ As datas usam o fuso `America/Sao_Paulo` (ajustável em `api/config.php`).
 ## Estrutura
 
 ```
-index.html        landing page
+index.html        landing page (com a abertura animada no início)
+intro-splash.*    animação de abertura da logo (gerada pela skill logo-motion)
+img/              logo (provisória) e vinheta de exemplo
+.claude/skills/   skill logo-motion (animação de logos e do site)
 styles.css        estilos
 app.js            interações, formulário e registro de ações
 admin.html        painel administrativo
