@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel · Mídia ADMoema</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --navy: #0b1f3a; --navy-2: #112a4d; --ouro: #d4a72c; --areia: #faf7f0; --borda: #e6dfcd; --cinza: #64748b; --texto: #1f2937; }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; font-family: "Manrope", system-ui, sans-serif; background: var(--areia); color: var(--texto); font-size: 15px; }
+    header { background: var(--navy); color: #fff; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    header h1 { font-size: 1.1rem; margin: 0; font-weight: 800; }
+    header h1 span { color: var(--ouro); }
+    header .acoes { margin-left: auto; display: flex; gap: .5rem; flex-wrap: wrap; }
+    button, .btn { font: inherit; font-weight: 700; padding: .5rem .9rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.3); background: transparent; color: #fff; cursor: pointer; }
+    button.primario { background: var(--ouro); color: var(--navy); border-color: var(--ouro); }
+    main { width: min(100% - 2rem, 1200px); margin: 1.5rem auto; }
+    .login { max-width: 420px; margin: 4rem auto; background: #fff; border: 1px solid var(--borda); border-radius: 16px; padding: 2rem; }
+    .login h2 { margin-top: 0; }
+    .login input { width: 100%; font: inherit; padding: .75rem 1rem; border-radius: 10px; border: 1.5px solid var(--borda); margin: .5rem 0 1rem; }
+    .login button { width: 100%; background: var(--navy); border-color: var(--navy); }
+    .login .erro { color: #e5484d; font-weight: 600; min-height: 1.2em; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
+    .kpi { background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 1rem 1.2rem; }
+    .kpi small { display: block; color: var(--cinza); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
+    .kpi strong { font-size: 1.7rem; color: var(--navy); }
+    .abas { display: flex; gap: .4rem; margin-bottom: 1rem; }
+    .abas button { color: var(--navy); border-color: var(--borda); background: #fff; }
+    .abas button.ativa { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .tabela { overflow-x: auto; background: #fff; border: 1px solid var(--borda); border-radius: 14px; }
+    table { border-collapse: collapse; width: 100%; min-width: 900px; }
+    th, td { text-align: left; vertical-align: top; padding: .7rem .9rem; border-bottom: 1px solid var(--borda); }
+    th { background: #f3eee2; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--cinza); position: sticky; top: 0; }
+    td { font-size: .9rem; }
+    td.txt { max-width: 320px; white-space: pre-wrap; }
+    .chip { display: inline-block; background: rgba(212,167,44,.15); border: 1px solid rgba(212,167,44,.5); border-radius: 999px; padding: .1rem .5rem; font-size: .75rem; font-weight: 700; margin: .1rem .2rem .1rem 0; color: #7a5a0a; }
+    .tipo { font-family: ui-monospace, monospace; font-size: .8rem; background: #eef2f7; border-radius: 6px; padding: .1rem .4rem; }
+    code { font-size: .78rem; color: var(--cinza); word-break: break-all; }
+    .vazio { padding: 2rem; text-align: center; color: var(--cinza); }
+    .frentes-resumo { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Painel · <span>Mídia</span> ADMoema</h1>
+    <div class="acoes" id="acoes-topo" hidden>
+      <button id="btn-atualizar">Atualizar</button>
+      <button id="btn-csv" class="primario">Baixar respostas (CSV)</button>
+      <button id="btn-sair">Sair</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="login" id="login">
+      <h2>Acesso restrito</h2>
+      <p>Informe o token de administração configurado no servidor (variável <code>ADMIN_TOKEN</code>).</p>
+      <label for="token">Token</label>
+      <input type="password" id="token" autocomplete="current-password">
+      <p class="erro" id="login-erro"></p>
+      <button id="btn-entrar">Entrar</button>
+    </section>
+
+    <section id="painel" hidden>
+      <div class="kpis" id="kpis"></div>
+      <div class="frentes-resumo" id="frentes-resumo"></div>
+      <div class="abas">
+        <button class="ativa" data-aba="respostas">Respostas</button>
+        <button data-aba="acoes">Registro de ações</button>
+      </div>
+      <div class="tabela" id="tabela"></div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const $ = (s) => document.querySelector(s);
+      let token = sessionStorage.getItem('admoema_admin_token') || '';
+      let aba = 'respostas';
+      let cache = { respostas: [], acoes: [], resumo: null };
+
+      async function api(caminho) {
+        const r = await fetch(caminho, { headers: { 'x-admin-token': token } });
+        if (r.status === 401 || r.status === 503) throw new Error((await r.json()).erro || 'Não autorizado');
+        return r.json();
+      }
+
+      function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+      async function carregar() {
+        const [r, a, s] = await Promise.all([api('/api/admin/respostas'), api('/api/admin/acoes'), api('/api/admin/resumo')]);
+        cache = { respostas: r.respostas, acoes: a.acoes, resumo: s.resumo };
+        renderizar();
+      }
+
+      function renderizar() {
+        const s = cache.resumo;
+        const porTipo = Object.fromEntries(s.acoesPorTipo.map((t) => [t.tipo, t.n]));
+        $('#kpis').innerHTML = [
+          ['Respostas', s.totalRespostas],
+          ['Visitantes únicos', s.visitasUnicas],
+          ['Visitas', porTipo.pagina_visitada || 0],
+          ['Formulários iniciados', porTipo.formulario_iniciado || 0],
+          ['Cliques em CTA', porTipo.cta_clicado || 0],
+        ].map(([k, v]) => `<div class="kpi"><small>${k}</small><strong>${v}</strong></div>`).join('');
+
+        const frentes = Object.entries(s.frentesMaisMarcadas).sort((x, y) => y[1] - x[1]);
+        $('#frentes-resumo').innerHTML = frentes.length
+          ? frentes.map(([f, n]) => `<span class="chip">${esc(f)} · ${n}</span>`).join('')
+          : '';
+
+        if (aba === 'respostas') {
+          if (!cache.respostas.length) { $('#tabela').innerHTML = '<p class="vazio">Nenhuma resposta ainda.</p>'; return; }
+          $('#tabela').innerHTML = `<table><thead><tr>
+            <th>#</th><th>Quando</th><th>Nome</th><th>Contato</th><th>Frentes</th>
+            <th>1. Sabe fazer</th><th>2. Quer aprender</th><th>3. Projeto</th></tr></thead><tbody>` +
+            cache.respostas.map((r) => `<tr>
+              <td>${r.id}</td><td>${esc(r.criado_em)}</td><td><strong>${esc(r.nome)}</strong></td><td>${esc(r.contato)}</td>
+              <td>${r.frentes.map((f) => `<span class="chip">${esc(f)}</span>`).join('')}</td>
+              <td class="txt">${esc(r.sabe_fazer)}</td><td class="txt">${esc(r.quer_aprender)}</td><td class="txt">${esc(r.projeto_ajudar)}</td>
+            </tr>`).join('') + '</tbody></table>';
+        } else {
+          if (!cache.acoes.length) { $('#tabela').innerHTML = '<p class="vazio">Nenhuma ação registrada.</p>'; return; }
+          $('#tabela').innerHTML = `<table><thead><tr>
+            <th>#</th><th>Quando</th><th>Tipo</th><th>Detalhe</th><th>Resposta</th><th>Sessão</th><th>IP</th><th>Navegador</th></tr></thead><tbody>` +
+            cache.acoes.map((a) => `<tr>
+              <td>${a.id}</td><td>${esc(a.criado_em)}</td><td><span class="tipo">${esc(a.tipo)}</span></td>
+              <td><code>${esc(a.detalhe ? JSON.stringify(a.detalhe) : '')}</code></td>
+              <td>${a.resposta_id ?? ''}</td><td><code>${esc((a.sessao || '').slice(0, 8))}</code></td>
+              <td><code>${esc(a.ip)}</code></td><td><code>${esc((a.user_agent || '').slice(0, 80))}</code></td>
+            </tr>`).join('') + '</tbody></table>';
+        }
+      }
+
+      function csv() {
+        const cols = ['id', 'criado_em', 'nome', 'contato', 'frentes', 'sabe_fazer', 'quer_aprender', 'projeto_ajudar'];
+        const e = (v) => { const s = Array.isArray(v) ? v.join(', ') : String(v ?? ''); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+        const linhas = [cols.join(';'), ...cache.respostas.map((r) => cols.map((c) => e(r[c])).join(';'))];
+        const blob = new Blob(['﻿' + linhas.join('\n')], { type: 'text/csv;charset=utf-8' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'respostas-midia-admoema.csv'; a.click();
+        URL.revokeObjectURL(a.href);
+      }
+
+      async function entrar() {
+        token = $('#token').value.trim();
+        $('#login-erro').textContent = '';
+        try {
+          await carregar();
+          sessionStorage.setItem('admoema_admin_token', token);
+          $('#login').hidden = true; $('#painel').hidden = false; $('#acoes-topo').hidden = false;
+        } catch (err) { $('#login-erro').textContent = err.message; }
+      }
+
+      $('#btn-entrar').addEventListener('click', entrar);
+      $('#token').addEventListener('keydown', (e) => { if (e.key === 'Enter') entrar(); });
+      $('#btn-atualizar').addEventListener('click', () => carregar().catch((e) => alert(e.message)));
+      $('#btn-csv').addEventListener('click', csv);
+      $('#btn-sair').addEventListener('click', () => { sessionStorage.removeItem('admoema_admin_token'); location.reload(); });
+      document.querySelectorAll('.abas button').forEach((b) => b.addEventListener('click', () => {
+        aba = b.dataset.aba; document.querySelectorAll('.abas button').forEach((x) => x.classList.toggle('ativa', x === b)); renderizar();
+      }));
+
+      if (token) { $('#token').value = token; entrar(); }
+    })();
+  </script>
+</body>
+</html>
