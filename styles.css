@@ -87,7 +87,14 @@ p:last-child { margin-bottom: 0; }
 .topo__inner { display: flex; align-items: center; gap: 1.5rem; min-height: 68px; }
 .marca { display: inline-flex; align-items: center; gap: .65rem; font-weight: 600; letter-spacing: .01em; }
 .marca__logo { position: relative; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--navy-800); overflow: hidden; transition: transform .4s var(--transicao); }
-.marca__logo img { width: 30px; height: 30px; }
+.marca__logo img { width: 30px; height: 30px; object-fit: contain; }
+.marca__logo--ad { width: 48px; height: 48px; background: var(--branco); border-radius: 12px; padding: 3px; }
+.marca__logo--ad img { width: 100%; height: 100%; }
+.marca__logo--midia { background: transparent; }
+.hero__brasao { display: block; width: 96px; height: auto; margin: 0 auto 1.25rem; filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .45)); }
+.rodape__logos { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-bottom: 1.75rem; }
+.rodape__logos img { height: 72px; width: auto; object-fit: contain; }
+.rodape__logos img[src$=".png"] { background: var(--branco); border-radius: 12px; padding: 4px; }
 .marca__logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, .5) 50%, transparent 60%); transform: translateX(-130%); }
 .marca:hover .marca__logo { transform: rotate(-6deg) scale(1.06); }
 .marca:hover .marca__logo::after { animation: brilho-logo .6s ease-in-out; }

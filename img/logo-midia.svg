@@ -1,7 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <!-- LOGO PROVISÓRIA do Ministério de Mídia ADMoema. Substitua por logo-midia.svg oficial (mesmo nome de arquivo). -->
-  <circle cx="100" cy="100" r="88" stroke="#d4a72c" stroke-width="6"/>
-  <path d="M52 140 100 48l48 92" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M74 112h52" stroke="#d4a72c" stroke-width="10" stroke-linecap="round"/>
-  <path d="M100 150v18M84 156v8M116 156v8M68 160v3M132 160v3" stroke="#d4a72c" stroke-width="6" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1000">
+  <!-- Logo do Ministério de Mídia ADMoema — vetor redesenhado a partir da imagem enviada. Se tiver o arquivo original em SVG, substitua este mantendo o nome. -->
+  <defs>
+    <linearGradient id="midia-grad" gradientUnits="userSpaceOnUse" x1="200" y1="150" x2="900" y2="860">
+      <stop offset="0" stop-color="#0db4c8"/>
+      <stop offset=".48" stop-color="#8a62a8"/>
+      <stop offset="1" stop-color="#e51b86"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#midia-grad)" stroke-width="88" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M182 186V816"/>
+    <path d="M372 186V816"/>
+    <path d="M372 204 945 500 372 796Z"/>
+  </g>
+  <g fill="url(#midia-grad)">
+    <circle cx="182" cy="376" r="92"/>
+    <circle cx="372" cy="640" r="92"/>
+  </g>
 </svg>
