@@ -24,9 +24,13 @@ Os arquivos prontos estão em `assets/site/`:
    (é `sessionStorage`). Para testar de novo, abra em aba anônima ou rode no console
    `sessionStorage.removeItem('intro-visto')`.
 
-Por que uma vez por sessão e não sempre? Quem navega entre seções e volta não quer
-esperar a logo de novo. Por que `sessionStorage` e não `localStorage`? Para a pessoa ver a
-abertura de novo amanhã; é parte da identidade do site, não um aviso legal.
+Por que uma vez por aba e não sempre? Quem navega entre seções e volta não quer esperar a
+logo de novo. Por que `sessionStorage` e não `localStorage`? Para a pessoa ver a abertura de
+novo amanhã; é parte da identidade do site, não um aviso legal.
+
+Se o dono do site preferir que a abertura rode **em toda visita** (inclusive ao atualizar a
+página), gere com `--sempre` ou acrescente `data-sempre="true"` ao `#intro-splash`. Nesse
+caso mantenha a duração curta (até 3 s) e o botão "Pular" bem visível.
 
 ## Cabeçalho (logo pequena)
 

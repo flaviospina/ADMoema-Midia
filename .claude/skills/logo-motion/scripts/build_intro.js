@@ -7,7 +7,7 @@
  *   [--title "Texto"] [--subtitle "Texto"] [--bg #0b1f3a] [--accent #d4a72c] [--fg #fff]
  *   [--k 1] [--hold 1] [--logo-size 34] [--title-size 5] [--font Manrope] [--bg-image fundo.jpg]
  *   [--stroke-width 2] [--no-fill] [--keep-stroke] [--direction left|up|center]
- *   [--dual-order a-first|b-first] [--dual-final row|stack]
+ *   [--dual-order a-first|b-first] [--dual-final row|stack] [--sempre]  (--sempre: no site, roda em toda visita)
  *   --out intro.html            (HTML completo para pré-visualizar/renderizar)
  *   --site pasta/               (gera intro-splash.html/.css/.js para colar num site)
  */
@@ -83,7 +83,7 @@ const subtitulo = args.subtitle ? `<p class="intro__subtitle">${escapar(args.sub
 const texto = titulo || subtitulo ? `<div class="intro__text">${titulo}${subtitulo}</div>` : '';
 
 const markup = (extra = '') =>
-`<div id="intro-splash" class="${classes.join(' ')}" data-recipe="${receita}" data-direction="${opcoes.direction}" data-duration="${(cfg.duracao * k).toFixed(2)}" data-hold="${hold}"${cfg.loop ? ' data-loop="true"' : ''} style="${estilo.join(';')}" role="img" aria-label="${escapar([args.title, args.subtitle].filter(Boolean).join(' — ') || 'Logo animada')}">
+`<div id="intro-splash" class="${classes.join(' ')}" data-recipe="${receita}" data-direction="${opcoes.direction}" data-duration="${(cfg.duracao * k).toFixed(2)}" data-hold="${hold}"${cfg.loop ? ' data-loop="true"' : ''}${args.sempre ? ' data-sempre="true"' : ''} style="${estilo.join(';')}" role="img" aria-label="${escapar([args.title, args.subtitle].filter(Boolean).join(' — ') || 'Logo animada')}">
   <div class="intro__flare"></div>
   <div class="intro__stage">
     ${palco}
@@ -134,7 +134,7 @@ if (args.site) {
   const splashCss = fs.readFileSync(path.join(RAIZ, 'assets/site/intro-splash.css'), 'utf8');
   const splashJs = fs.readFileSync(path.join(RAIZ, 'assets/site/intro-splash.js'), 'utf8');
   const botao = `\n  <button type="button" class="intro__pular" aria-label="Pular abertura">Pular</button>`;
-  const inline = `\n<script>try{if(sessionStorage.getItem('intro-visto')){var _i=document.getElementById('intro-splash');_i&&_i.parentNode.removeChild(_i)}}catch(e){}</script>`;
+  const inline = args.sempre ? '' : `\n<script>try{if(sessionStorage.getItem('intro-visto')){var _i=document.getElementById('intro-splash');_i&&_i.parentNode.removeChild(_i)}}catch(e){}</script>`;
   fs.writeFileSync(path.join(pasta, 'intro-splash.html'), markup(botao) + inline + '\n');
   fs.writeFileSync(path.join(pasta, 'intro-splash.css'), `/* Abertura com logo — gerado por logo-motion (receita: ${receita}) */\n${baseCss}\n${receitaCss}\n${splashCss}`);
   fs.writeFileSync(path.join(pasta, 'intro-splash.js'), splashJs);

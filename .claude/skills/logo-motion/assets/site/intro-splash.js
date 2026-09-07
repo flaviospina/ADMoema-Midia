@@ -1,11 +1,12 @@
-/* abertura do site · roda uma vez por sessão, fecha com "Pular", Esc, ou sozinha */
+/* abertura do site · roda uma vez por aba (ou sempre, com data-sempre="true"), fecha com "Pular", Esc, ou sozinha */
 (function () {
   'use strict';
   var el = document.getElementById('intro-splash');
   if (!el) return;
   var CHAVE = 'intro-visto';
-  function marcar() { try { sessionStorage.setItem(CHAVE, '1'); } catch (e) {} }
-  try { if (sessionStorage.getItem(CHAVE)) { el.remove(); return; } } catch (e) {}
+  var sempre = el.dataset.sempre === 'true'; // true = roda em toda visita; false = uma vez por aba
+  function marcar() { if (sempre) return; try { sessionStorage.setItem(CHAVE, '1'); } catch (e) {} }
+  if (!sempre) { try { if (sessionStorage.getItem(CHAVE)) { el.remove(); return; } } catch (e) {} }
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { el.remove(); marcar(); return; }
 
   document.documentElement.classList.add('intro-ativo');
