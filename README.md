@@ -18,7 +18,7 @@ terminal. Basta subir os arquivos.
 4. Clique em **Upload** e envie o arquivo `.zip`.
 5. Volte ao Gerenciador, clique com o botão direito no `.zip` → **Extract** (extrair) na
    pasta atual. Depois apague o `.zip`.
-6. Confira que `index.html`, `admin.html`, a pasta `api` e a pasta `dados` ficaram
+6. Confira que `index.php`, `admin.html`, a pasta `api` e a pasta `dados` ficaram
    **diretamente** na pasta escolhida (e não dentro de uma subpasta).
 7. Abra o endereço no navegador. Na primeira visita o banco de dados é criado
    automaticamente em `dados/admoema-midia.sqlite`.
@@ -81,6 +81,21 @@ redes. A skill que gera tudo isso fica em `.claude/skills/logo-motion` (arquivo
 `logo-motion.skill` para salvar no perfil) e também produz WebM com fundo transparente para
 OBS/vMix, GIF e a receita `dual` (duas logos em sequência, Mídia + AD).
 
+## Compartilhamento nas redes sociais
+
+Ao colar o link da página no WhatsApp, Facebook, Instagram, LinkedIn, Telegram ou X, aparece
+um cartão com título, descrição e a imagem `img/og-image.jpg` (1200×630). As meta tags
+(Open Graph e Twitter Card) ficam no início do `index.php` e o endereço é detectado
+automaticamente; se precisar fixar, preencha `URL_SITE` em `api/config.php`.
+
+Há também `img/og-quadrada.jpg` (1080×1080) para postar no feed do Instagram ou no status
+do WhatsApp.
+
+Se a imagem antiga continuar aparecendo depois de uma troca, o cache das redes precisa ser
+limpo: Facebook/Instagram em <https://developers.facebook.com/tools/debug/>, LinkedIn em
+<https://www.linkedin.com/post-inspector/>; no WhatsApp basta esperar ou enviar o link com
+um `?v=2` no final.
+
 ## Conteúdo da página
 
 1. **Início** — título, Romanos 12:5 e os pilares Servir · Comunicar · Capacitar · Evangelizar
@@ -124,7 +139,7 @@ As datas usam o fuso `America/Sao_Paulo` (ajustável em `api/config.php`).
 ## Estrutura
 
 ```
-index.html        landing page (com a abertura animada no início)
+index.php         landing page (com a abertura animada e as meta tags de compartilhamento)
 intro-splash.*    animação de abertura da logo (gerada pela skill logo-motion)
 img/              logo-midia.svg, logo-belem.png (coloque aqui) e vinheta-midia.mp4
 .claude/skills/   skill logo-motion (animação de logos e do site)

@@ -1,3 +1,17 @@
+<?php
+// URL absoluta do site, usada nas meta tags de compartilhamento (Facebook, WhatsApp, LinkedIn, X).
+// Detectada automaticamente; para fixar, preencha URL_SITE em api/config.php.
+require_once __DIR__ . '/api/config.php';
+$url_site = defined('URL_SITE') && URL_SITE !== '' ? rtrim(URL_SITE, '/') . '/' : (function () {
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    $host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $dir   = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+    return ($https ? 'https' : 'http') . '://' . $host . $dir . '/';
+})();
+$h = fn($v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$titulo_share = 'Ministério de Mídia ADMoema · Servir, Comunicar, Capacitar, Evangelizar';
+$descricao_share = 'Proposta de estruturação e expansão do Ministério de Mídia da Assembleia de Deus – Ministério do Belém, Setor 124, Moema. Conheça as nove frentes de trabalho e diga onde você pode contribuir.';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,6 +20,27 @@
   <title>Ministério de Mídia ADMoema · Servir, Comunicar, Capacitar, Evangelizar</title>
   <meta name="description" content="Proposta de estruturação e expansão do Ministério de Mídia da Assembleia de Deus – Ministério do Belém, Setor 124, Moema. Conheça as nove frentes de trabalho e diga onde você pode contribuir.">
   <meta name="theme-color" content="#0b1f3a">
+  <link rel="canonical" href="<?= $h($url_site) ?>">
+
+  <!-- Compartilhamento em redes sociais (Open Graph: Facebook, WhatsApp, LinkedIn, Telegram) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Ministério de Mídia ADMoema">
+  <meta property="og:url" content="<?= $h($url_site) ?>">
+  <meta property="og:title" content="<?= $h($titulo_share) ?>">
+  <meta property="og:description" content="<?= $h($descricao_share) ?>">
+  <meta property="og:image" content="<?= $h($url_site) ?>img/og-image.jpg">
+  <meta property="og:image:secure_url" content="<?= $h($url_site) ?>img/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ministério de Mídia ADMoema — Proposta de Estruturação e Expansão">
+  <!-- X / Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<?= $h($titulo_share) ?>">
+  <meta name="twitter:description" content="<?= $h($descricao_share) ?>">
+  <meta name="twitter:image" content="<?= $h($url_site) ?>img/og-image.jpg">
+  <meta name="twitter:image:alt" content="Ministério de Mídia ADMoema — Proposta de Estruturação e Expansão">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">

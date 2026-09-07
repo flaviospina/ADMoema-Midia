@@ -1,5 +1,5 @@
 # Ministério de Mídia ADMoema
-DirectoryIndex index.html
+DirectoryIndex index.php index.html
 Options -Indexes
 AddDefaultCharset UTF-8
 

@@ -29,6 +29,14 @@ const MYSQL_USUARIO = 'usuario_admoema';   // ex.: cpaneluser_midia
 const MYSQL_SENHA   = '';
 
 // -------------------------------------------------------------
-// 3) FUSO HORÁRIO usado nas datas dos registros
+// 3) ENDEREÇO DO SITE (opcional)
+//    Deixe vazio para detectar automaticamente. Preencha só se o
+//    compartilhamento nas redes mostrar a imagem errada, ex.:
+//    'https://www.seusite.com.br/midia'
+// -------------------------------------------------------------
+const URL_SITE = '';
+
+// -------------------------------------------------------------
+// 4) FUSO HORÁRIO usado nas datas dos registros
 // -------------------------------------------------------------
 const FUSO_HORARIO = 'America/Sao_Paulo';
