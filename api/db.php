@@ -21,6 +21,14 @@ const FRENTES = [
     'Sistemas e tecnologia',
 ];
 
+// Ponto de partida do projeto (pedido do Pr. Elias): edição de vídeo das transmissões
+const EDICAO_VIDEO = [
+    'ja_edito'       => 'Já sei editar vídeos',
+    'quero_aprender' => 'Quero aprender a editar',
+    'tenho_projeto'  => 'Tenho um projeto específico',
+    'ainda_nao'      => 'Ainda não, quero ajudar em outra frente',
+];
+
 const TIPOS_ACAO = [
     'pagina_visitada',
     'secao_vista',
@@ -81,6 +89,7 @@ function criar_tabelas_sqlite(PDO $pdo): void
             nome            TEXT    NOT NULL,
             contato         TEXT,
             frentes         TEXT    NOT NULL DEFAULT '[]',
+            edicao_video    TEXT,
             sabe_fazer      TEXT    NOT NULL,
             quer_aprender   TEXT    NOT NULL,
             projeto_ajudar  TEXT    NOT NULL,
@@ -97,6 +106,9 @@ function criar_tabelas_sqlite(PDO $pdo): void
             user_agent  TEXT,
             criado_em   TEXT    NOT NULL
         )");
+    // bancos criados antes da coluna edicao_video
+    $colunas = array_column($pdo->query('PRAGMA table_info(respostas)')->fetchAll(), 'name');
+    if (!in_array('edicao_video', $colunas, true)) $pdo->exec('ALTER TABLE respostas ADD COLUMN edicao_video TEXT');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_acoes_tipo ON acoes (tipo)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_acoes_criado_em ON acoes (criado_em)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_respostas_criado_em ON respostas (criado_em)');
@@ -110,12 +122,15 @@ function criar_tabelas_mysql(PDO $pdo): void
             nome            VARCHAR(120) NOT NULL,
             contato         VARCHAR(160) NULL,
             frentes         TEXT NOT NULL,
+            edicao_video    VARCHAR(40) NULL,
             sabe_fazer      TEXT NOT NULL,
             quer_aprender   TEXT NOT NULL,
             projeto_ajudar  TEXT NOT NULL,
             criado_em       DATETIME NOT NULL,
             INDEX idx_respostas_criado_em (criado_em)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $tem = $pdo->query("SHOW COLUMNS FROM respostas LIKE 'edicao_video'")->fetch();
+    if (!$tem) $pdo->exec('ALTER TABLE respostas ADD COLUMN edicao_video VARCHAR(40) NULL AFTER frentes');
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS acoes (
             id          INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -154,12 +169,13 @@ function registrar_acao(string $tipo, $detalhe = null, ?int $respostaId = null, 
 
 function salvar_resposta(array $d): int
 {
-    $stmt = db()->prepare('INSERT INTO respostas (nome, contato, frentes, sabe_fazer, quer_aprender, projeto_ajudar, criado_em)
-                           VALUES (:nome, :contato, :frentes, :sabe, :quer, :projeto, :criado_em)');
+    $stmt = db()->prepare('INSERT INTO respostas (nome, contato, frentes, edicao_video, sabe_fazer, quer_aprender, projeto_ajudar, criado_em)
+                           VALUES (:nome, :contato, :frentes, :edicao, :sabe, :quer, :projeto, :criado_em)');
     $stmt->execute([
         ':nome'      => $d['nome'],
         ':contato'   => $d['contato'] !== '' ? $d['contato'] : null,
         ':frentes'   => json_encode($d['frentes'], JSON_UNESCAPED_UNICODE),
+        ':edicao'    => $d['edicaoVideo'] ?: null,
         ':sabe'      => $d['sabeFazer'],
         ':quer'      => $d['querAprender'],
         ':projeto'   => $d['projetoAjudar'],
@@ -214,8 +230,14 @@ function resumo(): array
         }
     }
     arsort($frentes);
+    $edicao = [];
+    foreach ($pdo->query('SELECT edicao_video, COUNT(*) AS n FROM respostas GROUP BY edicao_video') as $r) {
+        $edicao[$r['edicao_video'] ?: 'nao_informado'] = (int) $r['n'];
+    }
     return [
         'totalRespostas'     => $total,
+        'edicaoVideo'        => (object) $edicao,
+        'edicaoVideoRotulos' => (object) EDICAO_VIDEO,
         'visitasUnicas'      => $unicos,
         'acoesPorTipo'       => $porTipo,
         'frentesMaisMarcadas' => (object) $frentes,

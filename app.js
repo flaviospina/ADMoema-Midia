@@ -153,7 +153,8 @@
     let primeiro = null;
     for (const [campo, msg] of Object.entries(erros)) {
       const el = form.querySelector('[data-erro-para="' + campo + '"]');
-      const input = form.elements[campo];
+      let input = form.elements[campo];
+      if (input && typeof input.closest !== 'function') input = input[0]; // grupo de rádio
       if (el) el.textContent = msg;
       if (input) { input.closest('.campo').classList.add('invalido'); if (!primeiro) primeiro = input; }
     }
@@ -163,6 +164,7 @@
   function validarLocal(dados) {
     const erros = {};
     if (dados.nome.length < 2) erros.nome = 'Informe seu nome.';
+    if (!dados.edicaoVideo) erros.edicaoVideo = 'Marque uma opção sobre edição de vídeo.';
     if (dados.sabeFazer.length < 3) erros.sabeFazer = 'Conte o que você já sabe fazer.';
     if (dados.querAprender.length < 3) erros.querAprender = 'Conte o que gostaria de aprender.';
     if (dados.projetoAjudar.length < 3) erros.projetoAjudar = 'Conte qual projeto gostaria de ajudar.';
@@ -176,6 +178,7 @@
     const dados = {
       nome: form.nome.value.trim(),
       contato: form.contato.value.trim(),
+      edicaoVideo: (form.querySelector('input[name="edicaoVideo"]:checked') || {}).value || '',
       frentes: Array.from(form.querySelectorAll('input[name="frentes"]:checked')).map((i) => i.value),
       sabeFazer: form.sabeFazer.value.trim(),
       querAprender: form.querAprender.value.trim(),

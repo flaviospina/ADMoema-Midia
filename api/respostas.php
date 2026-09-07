@@ -15,7 +15,9 @@ $dados = [
     'querAprender'  => texto_longo($b['querAprender'] ?? null, 2000),
     'projetoAjudar' => texto_longo($b['projetoAjudar'] ?? null, 2000),
     'frentes'       => [],
+    'edicaoVideo'   => texto($b['edicaoVideo'] ?? null, 40),
 ];
+if (!array_key_exists($dados['edicaoVideo'], EDICAO_VIDEO)) $dados['edicaoVideo'] = '';
 if (isset($b['frentes']) && is_array($b['frentes'])) {
     $dados['frentes'] = array_values(array_filter($b['frentes'], fn($f) => is_string($f) && in_array($f, FRENTES, true)));
 }
@@ -23,6 +25,7 @@ $sessao = texto($b['sessao'] ?? null, 64) ?: null;
 
 $erros = [];
 if (mb_strlen($dados['nome']) < 2)          $erros['nome'] = 'Informe seu nome.';
+if ($dados['edicaoVideo'] === '')            $erros['edicaoVideo'] = 'Marque uma opção sobre edição de vídeo.';
 if (mb_strlen($dados['sabeFazer']) < 3)     $erros['sabeFazer'] = 'Conte o que você já sabe fazer.';
 if (mb_strlen($dados['querAprender']) < 3)  $erros['querAprender'] = 'Conte o que gostaria de aprender.';
 if (mb_strlen($dados['projetoAjudar']) < 3) $erros['projetoAjudar'] = 'Conte qual projeto gostaria de ajudar.';
@@ -38,6 +41,7 @@ try {
     $respostaId = salvar_resposta($dados);
     registrar_acao('formulario_enviado', [
         'frentes'  => $dados['frentes'],
+        'edicaoVideo' => $dados['edicaoVideo'],
         'tamanhos' => [mb_strlen($dados['sabeFazer']), mb_strlen($dados['querAprender']), mb_strlen($dados['projetoAjudar'])],
     ], $respostaId, $sessao);
     $pdo->commit();

@@ -31,9 +31,9 @@ switch ($recurso) {
         header('Cache-Control: no-store');
         echo "\xEF\xBB\xBF"; // BOM para o Excel abrir com acentos
         $saida = fopen('php://output', 'w');
-        fputcsv($saida, ['id', 'criado_em', 'nome', 'contato', 'frentes', 'sabe_fazer', 'quer_aprender', 'projeto_ajudar'], ';');
+        fputcsv($saida, ['id', 'criado_em', 'nome', 'contato', 'edicao_video', 'frentes', 'sabe_fazer', 'quer_aprender', 'projeto_ajudar'], ';');
         foreach (array_reverse(listar_respostas(100000)) as $r) {
-            fputcsv($saida, [$r['id'], $r['criado_em'], $r['nome'], $r['contato'], implode(', ', $r['frentes']), $r['sabe_fazer'], $r['quer_aprender'], $r['projeto_ajudar']], ';');
+            fputcsv($saida, [$r['id'], $r['criado_em'], $r['nome'], $r['contato'], EDICAO_VIDEO[$r['edicao_video']] ?? '', implode(', ', $r['frentes']), $r['sabe_fazer'], $r['quer_aprender'], $r['projeto_ajudar']], ';');
         }
         fclose($saida);
         exit;

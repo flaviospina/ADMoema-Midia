@@ -96,6 +96,15 @@ limpo: Facebook/Instagram em <https://developers.facebook.com/tools/debug/>, Lin
 <https://www.linkedin.com/post-inspector/>; no WhatsApp basta esperar ou enviar o link com
 um `?v=2` no final.
 
+## Ponto de partida do projeto (pedido do Pr. Elias)
+
+Na reunião do ministério, a pedido do **Pr. Elias**, ficou definido que o Ministério de
+Multimídia começa pela **edição de vídeo das transmissões** já capturadas, gerando arquivos
+de vídeo de: pregação, louvor ministerial, louvor individual e louvor de qualquer ministério
+da ADMoema. A página destaca isso logo após a abertura e o formulário pergunta a cada
+integrante se já edita vídeo, quer aprender, tem um projeto específico ou prefere outra
+frente (coluna `edicao_video` no banco; o painel e o CSV mostram o resultado).
+
 ## Conteúdo da página
 
 1. **Início** — título, Romanos 12:5 e os pilares Servir · Comunicar · Capacitar · Evangelizar
@@ -115,7 +124,8 @@ Criado automaticamente pelo `api/db.php`.
 
 **Tabela `respostas`** — `id`, `nome`, `contato` (opcional), `frentes` (JSON com as
 frentes marcadas), `sabe_fazer` (pergunta 1), `quer_aprender` (pergunta 2),
-`projeto_ajudar` (pergunta 3), `criado_em`.
+`projeto_ajudar` (pergunta 3), `edicao_video` (`ja_edito`, `quero_aprender`,
+`tenho_projeto`, `ainda_nao`), `criado_em`.
 
 **Tabela `acoes`** (registro de ações) — `id`, `tipo` (`pagina_visitada`, `secao_vista`,
 `cta_clicado`, `formulario_iniciado`, `formulario_enviado`, `formulario_erro`,

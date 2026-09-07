@@ -88,6 +88,7 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
         <span class="marca__texto"><strong>Mídia</strong> ADMoema</span>
       </a>
       <nav class="nav" aria-label="Seções da página">
+        <a href="#prioridade">Ponto de partida</a>
         <a href="#proposito">Propósito</a>
         <a href="#frentes">Frentes</a>
         <a href="#tecnologia">Tecnologia</a>
@@ -100,6 +101,7 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
       </button>
     </div>
     <div class="menu-mobile" id="menu-mobile" hidden>
+      <a href="#prioridade">Ponto de partida</a>
       <a href="#proposito">Propósito</a>
       <a href="#frentes">Frentes</a>
       <a href="#tecnologia">Tecnologia</a>
@@ -133,6 +135,53 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
         </div>
       </div>
       <a href="#proposito" class="hero__scroll" aria-label="Rolar para o conteúdo"><span></span></a>
+    </section>
+
+
+    <!-- ===================== PONTO DE PARTIDA (pedido do Pr. Elias) ===================== -->
+    <section class="secao secao--prioridade" id="prioridade" data-secao="prioridade">
+      <div class="container">
+        <div class="prioridade reveal">
+          <div class="prioridade__cabecalho">
+            <span class="prioridade__tag">Ponto-chave · Pedido do Pr. Elias</span>
+            <h2>Por onde o Ministério de Multimídia começa: <span class="grad">edição de vídeo</span> das transmissões.</h2>
+            <p class="lead">Na reunião do ministério, a pedido do <strong>Pr. Elias</strong>, ficou definido que o primeiro passo do projeto é
+              transformar as transmissões (streams) já capturadas em arquivos de vídeo editados, prontos para publicar e preservar.</p>
+          </div>
+
+          <div class="prioridade__grade">
+            <article class="videotipo">
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 20V9a6 6 0 0 1 12 0v11"/><path d="M6 14h12M9 20h6"/><circle cx="12" cy="5" r="1"/></svg></div>
+              <h3>Pregação</h3>
+              <p>A mensagem de cada culto, recortada e identificada, para quem não pôde estar presente.</p>
+            </article>
+            <article class="videotipo">
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V6l10-2v11"/></svg></div>
+              <h3>Louvor ministerial</h3>
+              <p>Os momentos de louvor conduzidos pelo ministério de louvor da igreja.</p>
+            </article>
+            <article class="videotipo">
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></div>
+              <h3>Louvor individual</h3>
+              <p>Participações individuais: cantores, instrumentistas e apresentações especiais.</p>
+            </article>
+            <article class="videotipo">
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14 20a5 5 0 0 1 7-4.5"/></svg></div>
+              <h3>Louvor dos ministérios</h3>
+              <p>Coral, crianças, jovens, irmãs e qualquer ministério da ADMoema que ministre em louvor.</p>
+            </article>
+          </div>
+
+          <div class="prioridade__chamada">
+            <div>
+              <p class="prioridade__pergunta"><strong>Precisamos saber quem são as pessoas do ministério</strong> que já sabem editar vídeo,
+                que querem aprender ou que têm um projeto específico para esses vídeos.</p>
+              <p class="prioridade__nota">Não é preciso ser profissional: quem sabe, ensina; quem começa, encontra espaço. O importante é se identificar agora.</p>
+            </div>
+            <a href="#formulario" class="btn btn--ouro btn--lg" data-cta="prioridade">Quero participar da edição de vídeo</a>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ===================== PROPÓSITO ===================== -->
@@ -402,7 +451,7 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
         <div class="cabecalho-secao reveal">
           <p class="rotulo">Três perguntas para cada integrante</p>
           <h2>Onde você pode contribuir?</h2>
-          <p class="lead">Responda com sinceridade. Não existe resposta pequena: cada habilidade e cada vontade de aprender encontram lugar em uma das frentes.</p>
+          <p class="lead">Responda com sinceridade. Não existe resposta pequena: cada habilidade e cada vontade de aprender encontram lugar em uma das frentes. Se você edita vídeo, quer aprender ou tem um projeto para os vídeos das transmissões, marque logo abaixo.</p>
         </div>
 
         <form class="form reveal" id="form-perguntas" novalidate>
@@ -417,6 +466,17 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
               <input type="text" id="contato" name="contato" autocomplete="tel" maxlength="160" placeholder="Para conversarmos com você">
             </div>
           </div>
+
+          <fieldset class="campo campo--edicao">
+            <legend>Edição de vídeo das transmissões <span class="obrig">*</span> <span class="opcional">(ponto de partida do projeto, a pedido do Pr. Elias)</span></legend>
+            <div class="opcoes-radio" id="edicao-video">
+              <label><input type="radio" name="edicaoVideo" value="ja_edito"><span class="caixa caixa--radio"></span><span>Já sei editar vídeos</span></label>
+              <label><input type="radio" name="edicaoVideo" value="quero_aprender"><span class="caixa caixa--radio"></span><span>Quero aprender a editar</span></label>
+              <label><input type="radio" name="edicaoVideo" value="tenho_projeto"><span class="caixa caixa--radio"></span><span>Tenho um projeto específico</span></label>
+              <label><input type="radio" name="edicaoVideo" value="ainda_nao"><span class="caixa caixa--radio"></span><span>Ainda não, mas quero ajudar em outra frente</span></label>
+            </div>
+            <small class="erro" data-erro-para="edicaoVideo"></small>
+          </fieldset>
 
           <fieldset class="campo campo--frentes">
             <legend>Frentes com que você se identifica <span class="opcional">(marque quantas quiser)</span></legend>
@@ -447,7 +507,7 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
             <span class="pergunta__n">3</span>
             <div class="campo">
               <label for="projetoAjudar">Qual projeto gostaria de ajudar a construir? <span class="obrig">*</span></label>
-              <textarea id="projetoAjudar" name="projetoAjudar" rows="4" maxlength="2000" required placeholder="Ex.: Hinário Digital, pedidos de oração, escala da equipe, identidade visual..."></textarea>
+              <textarea id="projetoAjudar" name="projetoAjudar" rows="4" maxlength="2000" required placeholder="Ex.: editar as pregações e louvores das transmissões, Hinário Digital, pedidos de oração, escala da equipe..."></textarea>
               <small class="erro" data-erro-para="projetoAjudar"></small>
             </div>
           </div>

@@ -41,7 +41,9 @@
     .tipo { font-family: ui-monospace, monospace; font-size: .8rem; background: #eef2f7; border-radius: 6px; padding: .1rem .4rem; }
     code { font-size: .78rem; color: var(--cinza); word-break: break-all; }
     .vazio { padding: 2rem; text-align: center; color: var(--cinza); }
-    .frentes-resumo { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem; }
+    .frentes-resumo { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-bottom: 1.5rem; }
+    .rotulo-grupo { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--cinza); margin: 0 .3rem 0 .6rem; }
+    .chip--navy { background: rgba(11,31,58,.08); border-color: rgba(11,31,58,.35); color: var(--navy); }
   </style>
 </head>
 <body>
@@ -107,18 +109,21 @@
           ['Cliques em CTA', porTipo.cta_clicado || 0],
         ].map(([k, v]) => `<div class="kpi"><small>${k}</small><strong>${v}</strong></div>`).join('');
 
+        const rot = s.edicaoVideoRotulos || {};
+        const edicao = Object.entries(s.edicaoVideo || {}).sort((x, y) => y[1] - x[1]);
         const frentes = Object.entries(s.frentesMaisMarcadas).sort((x, y) => y[1] - x[1]);
-        $('#frentes-resumo').innerHTML = frentes.length
-          ? frentes.map(([f, n]) => `<span class="chip">${esc(f)} · ${n}</span>`).join('')
-          : '';
+        $('#frentes-resumo').innerHTML =
+          (edicao.length ? `<span class="rotulo-grupo">Edição de vídeo (pedido do Pr. Elias):</span>` + edicao.map(([k, n]) => `<span class="chip chip--navy">${esc(rot[k] || (k === 'nao_informado' ? 'Não informado (antes do campo)' : k))} · ${n}</span>`).join('') : '') +
+          (frentes.length ? `<span class="rotulo-grupo">Frentes:</span>` + frentes.map(([f, n]) => `<span class="chip">${esc(f)} · ${n}</span>`).join('') : '');
 
         if (aba === 'respostas') {
           if (!cache.respostas.length) { $('#tabela').innerHTML = '<p class="vazio">Nenhuma resposta ainda.</p>'; return; }
           $('#tabela').innerHTML = `<table><thead><tr>
-            <th>#</th><th>Quando</th><th>Nome</th><th>Contato</th><th>Frentes</th>
+            <th>#</th><th>Quando</th><th>Nome</th><th>Contato</th><th>Edição de vídeo</th><th>Frentes</th>
             <th>1. Sabe fazer</th><th>2. Quer aprender</th><th>3. Projeto</th></tr></thead><tbody>` +
             cache.respostas.map((r) => `<tr>
               <td>${r.id}</td><td>${esc(r.criado_em)}</td><td><strong>${esc(r.nome)}</strong></td><td>${esc(r.contato)}</td>
+              <td>${r.edicao_video ? `<span class="chip chip--navy">${esc((cache.resumo.edicaoVideoRotulos || {})[r.edicao_video] || r.edicao_video)}</span>` : ''}</td>
               <td>${r.frentes.map((f) => `<span class="chip">${esc(f)}</span>`).join('')}</td>
               <td class="txt">${esc(r.sabe_fazer)}</td><td class="txt">${esc(r.quer_aprender)}</td><td class="txt">${esc(r.projeto_ajudar)}</td>
             </tr>`).join('') + '</tbody></table>';
