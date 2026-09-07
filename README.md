@@ -20,8 +20,10 @@ terminal. Basta subir os arquivos.
    pasta atual. Depois apague o `.zip`.
 6. Confira que `index.php`, `admin.html`, a pasta `api` e a pasta `dados` ficaram
    **diretamente** na pasta escolhida (e não dentro de uma subpasta).
-7. Abra o endereço no navegador. Na primeira visita o banco de dados é criado
-   automaticamente em `dados/admoema-midia.sqlite`.
+7. Abra **`seusite.com.br/midia/api/instalar.php`** no navegador. Essa página cria o banco
+   de dados e mostra uma lista de checagens (verde = ok, vermelho = o que corrigir e como).
+   O arquivo `dados/admoema-midia.sqlite` aparece na pasta `dados` depois disso.
+   (Abrir a página principal também cria o banco; o instalador só deixa isso visível.)
 
 Pronto. A página já está no ar e o formulário já grava no banco.
 
@@ -120,7 +122,11 @@ frente (coluna `edicao_video` no banco; o painel e o CSV mostram o resultado).
 
 ## Banco de dados
 
-Criado automaticamente pelo `api/db.php`.
+Criado automaticamente pelo `api/db.php` na primeira visita à página (ou ao abrir
+`api/instalar.php`). A pasta `dados` vem só com o `.htaccess` de proteção e os arquivos de
+consulta `schema-sqlite.sql` e `schema-mysql.sql`; o arquivo `admoema-midia.sqlite` é
+gerado no servidor e nunca precisa ser enviado. Se `api/instalar.php` acusar falta de
+permissão, ajuste a pasta `dados` para 755 ou 775 no Gerenciador de Arquivos.
 
 **Tabela `respostas`** — `id`, `nome`, `contato` (opcional), `frentes` (JSON com as
 frentes marcadas), `sabe_fazer` (pergunta 1), `quer_aprender` (pergunta 2),
@@ -158,8 +164,9 @@ app.js            interações, formulário e registro de ações
 admin.html        painel administrativo
 api/config.php    senha do painel e banco (único arquivo a ajustar)
 api/db.php        conexão e criação das tabelas
+api/instalar.php  cria o banco e mostra as checagens (abra no navegador)
 api/*.php         rotas da API
-dados/            banco SQLite (protegido por .htaccess)
+dados/            banco SQLite gerado no servidor (protegido por .htaccess) + schema-*.sql de consulta
 .htaccess         configurações do Apache
 ```
 

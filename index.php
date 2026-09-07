@@ -2,6 +2,9 @@
 // URL absoluta do site, usada nas meta tags de compartilhamento (Facebook, WhatsApp, LinkedIn, X).
 // Detectada automaticamente; para fixar, preencha URL_SITE em api/config.php.
 require_once __DIR__ . '/api/config.php';
+// Garante que o banco de dados exista já na primeira visita (sem depender do JavaScript).
+// Se algo falhar (ex.: permissão da pasta dados/), a página continua abrindo; veja api/instalar.php.
+try { require_once __DIR__ . '/api/db.php'; restore_exception_handler(); db(); } catch (Throwable $e) { error_log('[admoema-midia] banco: ' . $e->getMessage()); }
 $url_site = defined('URL_SITE') && URL_SITE !== '' ? rtrim(URL_SITE, '/') . '/' : (function () {
     $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
     $host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
