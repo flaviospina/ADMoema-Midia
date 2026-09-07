@@ -12,6 +12,8 @@ $url_site = defined('URL_SITE') && URL_SITE !== '' ? rtrim(URL_SITE, '/') . '/' 
     return ($https ? 'https' : 'http') . '://' . $host . $dir . '/';
 })();
 $h = fn($v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+// Versão dos arquivos de estilo/script: muda a cada atualização, para o navegador não usar cache antigo
+$v = fn(string $f) => $f . '?v=' . (@filemtime(__DIR__ . '/' . $f) ?: '1');
 $titulo_share = 'Ministério de Mídia ADMoema · Servir, Comunicar, Capacitar, Evangelizar';
 $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mídia da Assembleia de Deus – Ministério do Belém, Setor 124, Moema. Conheça as nove frentes de trabalho e diga onde você pode contribuir.';
 ?>
@@ -47,8 +49,8 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="intro-splash.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="<?= $v('intro-splash.css') ?>">
+  <link rel="stylesheet" href="<?= $v('styles.css') ?>">
   <link rel="icon" type="image/png" href="img/logo-belem.png">
   <link rel="apple-touch-icon" href="img/logo-belem.png">
 </head>
@@ -154,22 +156,22 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
 
           <div class="prioridade__grade">
             <article class="videotipo">
-              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 20V9a6 6 0 0 1 12 0v11"/><path d="M6 14h12M9 20h6"/><circle cx="12" cy="5" r="1"/></svg></div>
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#e6bd4a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20V9a6 6 0 0 1 12 0v11"/><path d="M6 14h12M9 20h6"/><circle cx="12" cy="5" r="1"/></svg></div>
               <h3>Pregação</h3>
               <p>A mensagem de cada culto, recortada e identificada, para quem não pôde estar presente.</p>
             </article>
             <article class="videotipo">
-              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V6l10-2v11"/></svg></div>
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#e6bd4a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V6l10-2v11"/></svg></div>
               <h3>Louvor ministerial</h3>
               <p>Os momentos de louvor conduzidos pelo ministério de louvor da igreja.</p>
             </article>
             <article class="videotipo">
-              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></div>
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#e6bd4a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></div>
               <h3>Louvor individual</h3>
               <p>Participações individuais: cantores, instrumentistas e apresentações especiais.</p>
             </article>
             <article class="videotipo">
-              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14 20a5 5 0 0 1 7-4.5"/></svg></div>
+              <div class="videotipo__icone" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#e6bd4a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14 20a5 5 0 0 1 7-4.5"/></svg></div>
               <h3>Louvor dos ministérios</h3>
               <p>Coral, crianças, jovens, irmãs e qualquer ministério da ADMoema que ministre em louvor.</p>
             </article>
@@ -551,7 +553,7 @@ $descricao_share = 'Proposta de estruturação e expansão do Ministério de Mí
     </div>
   </footer>
 
-  <script src="intro-splash.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="<?= $v('intro-splash.js') ?>" defer></script>
+  <script src="<?= $v('app.js') ?>" defer></script>
 </body>
 </html>

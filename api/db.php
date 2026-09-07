@@ -58,8 +58,15 @@ function db(): PDO
     ];
 
     if (BANCO_TIPO === 'mysql') {
+        if (MYSQL_BANCO === 'SEUUSUARIO_admoema' || MYSQL_SENHA === 'COLOQUE-A-SENHA') {
+            throw new RuntimeException('Preencha MYSQL_BANCO, MYSQL_USUARIO e MYSQL_SENHA em api/config.php com os dados criados no cPanel.');
+        }
         $dsn = sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4', MYSQL_HOST, MYSQL_BANCO);
-        $pdo = new PDO($dsn, MYSQL_USUARIO, MYSQL_SENHA, $opcoes);
+        try {
+            $pdo = new PDO($dsn, MYSQL_USUARIO, MYSQL_SENHA, $opcoes);
+        } catch (PDOException $e) {
+            throw new RuntimeException(explicar_erro_mysql($e), 0, $e);
+        }
         criar_tabelas_mysql($pdo);
         return $pdo;
     }
@@ -79,6 +86,15 @@ function db(): PDO
     $pdo->exec('PRAGMA foreign_keys = ON');
     criar_tabelas_sqlite($pdo);
     return $pdo;
+}
+
+function explicar_erro_mysql(PDOException $e): string
+{
+    $m = $e->getMessage();
+    if (stripos($m, 'Access denied') !== false)   return 'MySQL recusou usuário/senha. Confira MYSQL_USUARIO e MYSQL_SENHA em api/config.php e se o usuário foi adicionado ao banco no cPanel (Add User To Database, todos os privilégios). Detalhe: ' . $m;
+    if (stripos($m, 'Unknown database') !== false) return 'O banco informado em MYSQL_BANCO não existe. Confira o nome exato em cPanel → Bancos de Dados MySQL. Detalhe: ' . $m;
+    if (stripos($m, "Connection refused") !== false || stripos($m, 'No such file') !== false || stripos($m, 'getaddrinfo') !== false) return 'Não foi possível conectar em MYSQL_HOST (' . MYSQL_HOST . '). Na HostGator use "localhost". Detalhe: ' . $m;
+    return 'Erro de conexão MySQL: ' . $m;
 }
 
 function criar_tabelas_sqlite(PDO $pdo): void
@@ -305,5 +321,6 @@ function autenticar_admin(): void
 // Converte exceções em respostas JSON legíveis (sem vazar detalhes internos)
 set_exception_handler(function (Throwable $e): void {
     error_log('[admoema-midia] ' . $e->getMessage());
-    responder(500, ['ok' => false, 'erro' => 'Erro interno no servidor. Verifique api/config.php e as permissões da pasta /dados.']);
+    $msg = $e instanceof RuntimeException ? $e->getMessage() : 'Erro interno no servidor. Abra api/instalar.php para diagnosticar.';
+    responder(500, ['ok' => false, 'erro' => $msg]);
 });

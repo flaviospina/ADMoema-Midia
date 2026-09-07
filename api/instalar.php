@@ -19,7 +19,14 @@ version_compare(PHP_VERSION, '7.4.0', '>=') ? $ok('PHP ' . PHP_VERSION) : $erro(
 $extensao = BANCO_TIPO === 'mysql' ? 'pdo_mysql' : 'pdo_sqlite';
 extension_loaded($extensao) ? $ok("Extensão $extensao disponível") : $erro("Extensão $extensao ausente", 'Ative em cPanel → Select PHP Version → Extensions.');
 
-// 2) pasta dados (SQLite)
+// 2) configuração do MySQL preenchida?
+if (BANCO_TIPO === 'mysql') {
+    (MYSQL_BANCO === 'SEUUSUARIO_admoema' || MYSQL_SENHA === 'COLOQUE-A-SENHA')
+        ? $erro('api/config.php ainda com os valores de exemplo', 'Preencha MYSQL_BANCO, MYSQL_USUARIO e MYSQL_SENHA com o que você criou em cPanel → Bancos de Dados MySQL®.')
+        : $ok('Configuração MySQL preenchida (' . MYSQL_USUARIO . '@' . MYSQL_HOST . ' / ' . MYSQL_BANCO . ')');
+}
+
+// 2b) pasta dados (SQLite)
 $pasta = dirname(__DIR__) . '/dados';
 if (BANCO_TIPO !== 'mysql') {
     if (!is_dir($pasta)) @mkdir($pasta, 0755, true);
@@ -50,6 +57,9 @@ try {
     $ok("Registros: $nR resposta(s) e $nA ação(ões)");
 } catch (Throwable $e) {
     $erro('Falha ao criar/abrir o banco', $e->getMessage());
+    if (BANCO_TIPO === 'mysql') {
+        $aviso('Como configurar o MySQL no cPanel', '1) Bancos de Dados MySQL® → Criar novo banco (ex.: admoema). 2) Adicionar novo usuário (ex.: midia) com senha. 3) "Adicionar usuário ao banco" marcando TODOS OS PRIVILÉGIOS. 4) Copie os nomes completos (com o prefixo do cPanel) para api/config.php. 5) Recarregue esta página. As tabelas são criadas sozinhas; se preferir, importe dados/schema-mysql.sql no phpMyAdmin.');
+    }
 }
 
 // 4) senha do painel

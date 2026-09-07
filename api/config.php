@@ -14,19 +14,18 @@
 const SENHA_ADMIN = 'Midia@ADMoema2026';
 
 // -------------------------------------------------------------
-// 2) BANCO DE DADOS
-//    'sqlite' → não precisa configurar nada. O arquivo do banco é
-//               criado automaticamente na pasta /dados (protegida).
-//    'mysql'  → use se preferir um banco MySQL criado no cPanel
-//               (cPanel → Bancos de Dados MySQL). Preencha abaixo.
+// 2) BANCO DE DADOS MySQL (phpMyAdmin do servidor)
+//    Crie o banco e o usuário em cPanel → Bancos de Dados MySQL®
+//    (veja o passo a passo no README) e preencha abaixo.
+//    Na HostGator o nome do banco e do usuário começam com o seu
+//    usuário do cPanel + "_", ex.: "flavio_admoema".
 // -------------------------------------------------------------
-const BANCO_TIPO = 'sqlite';
+const BANCO_TIPO = 'mysql';                 // 'mysql' (recomendado) ou 'sqlite' (arquivo em /dados, sem configurar nada)
 
-// Usado apenas quando BANCO_TIPO = 'mysql'
-const MYSQL_HOST    = 'localhost';
-const MYSQL_BANCO   = 'usuario_admoema';   // ex.: cpaneluser_admoema
-const MYSQL_USUARIO = 'usuario_admoema';   // ex.: cpaneluser_midia
-const MYSQL_SENHA   = '';
+const MYSQL_HOST    = 'localhost';          // na HostGator é "localhost"
+const MYSQL_BANCO   = 'SEUUSUARIO_admoema'; // nome do banco criado no cPanel
+const MYSQL_USUARIO = 'SEUUSUARIO_midia';   // usuário do banco criado no cPanel
+const MYSQL_SENHA   = 'COLOQUE-A-SENHA';    // senha definida ao criar o usuário
 
 // -------------------------------------------------------------
 // 3) ENDEREÇO DO SITE (opcional)

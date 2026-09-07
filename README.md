@@ -10,22 +10,38 @@ terminal. Basta subir os arquivos.
 
 ## Como publicar na HostGator (sem terminal)
 
-1. **Baixe o pacote** `admoema-midia-hostgator.zip` (está na raiz deste repositório).
-2. Entre no **cPanel → Arquivos → Gerenciador de Arquivos**.
-3. Abra a pasta do seu site (normalmente `public_html`). Se quiser a página em um
-   endereço como `seusite.com.br/midia`, crie a pasta `midia` e entre nela.
-   Se quiser na raiz do domínio, fique em `public_html` mesmo.
-4. Clique em **Upload** e envie o arquivo `.zip`.
-5. Volte ao Gerenciador, clique com o botão direito no `.zip` → **Extract** (extrair) na
-   pasta atual. Depois apague o `.zip`.
-6. Confira que `index.php`, `admin.html`, a pasta `api` e a pasta `dados` ficaram
-   **diretamente** na pasta escolhida (e não dentro de uma subpasta).
-7. Abra **`seusite.com.br/midia/api/instalar.php`** no navegador. Essa página cria o banco
-   de dados e mostra uma lista de checagens (verde = ok, vermelho = o que corrigir e como).
-   O arquivo `dados/admoema-midia.sqlite` aparece na pasta `dados` depois disso.
-   (Abrir a página principal também cria o banco; o instalador só deixa isso visível.)
+### Parte 1 · Criar o banco MySQL no cPanel (uma vez só)
 
-Pronto. A página já está no ar e o formulário já grava no banco.
+1. cPanel → **Bancos de Dados MySQL®**.
+2. Em *Criar novo banco de dados*, digite `admoema` e clique em **Criar**. O nome final fica
+   `SEUUSUARIO_admoema` (o cPanel coloca o seu usuário na frente). Anote.
+3. Em *Usuários MySQL → Adicionar novo usuário*, digite `midia`, crie uma senha forte
+   (use o gerador) e clique em **Criar usuário**. O nome final fica `SEUUSUARIO_midia`. Anote a senha.
+4. Em *Adicionar usuário ao banco de dados*, escolha o usuário e o banco, clique em **Adicionar**,
+   marque **TODOS OS PRIVILÉGIOS** e confirme.
+5. (Opcional) cPanel → **phpMyAdmin** → clique no banco → aba **Importar** → envie
+   `dados/schema-mysql.sql`. O site cria as tabelas sozinho se você pular este passo.
+
+### Parte 2 · Subir os arquivos
+
+1. **Baixe o pacote** `admoema-midia-hostgator.zip` (está na raiz deste repositório).
+2. cPanel → **Arquivos → Gerenciador de Arquivos** → abra `public_html` (ou crie e entre na
+   pasta `midia` para o endereço `seusite.com.br/midia`).
+3. **Upload** do `.zip` → botão direito → **Extract** → apague o `.zip`. Se houver um
+   `index.html` antigo na pasta, apague-o.
+4. Abra `api/config.php` (botão direito → **Edit**) e preencha, com o que anotou na Parte 1:
+   ```php
+   const MYSQL_BANCO   = 'SEUUSUARIO_admoema';
+   const MYSQL_USUARIO = 'SEUUSUARIO_midia';
+   const MYSQL_SENHA   = 'a senha do usuário';
+   ```
+   Troque também a `SENHA_ADMIN` do painel. Salve.
+5. Abra **`seusite.com.br/midia/api/instalar.php`** no navegador. Ele conecta no MySQL, cria as
+   tabelas e mostra as checagens (verde = ok; vermelho = o que corrigir e como).
+6. Abra o site. Para ver as respostas, use `admin.html` com a `SENHA_ADMIN`.
+
+> Quer testar sem MySQL? Em `api/config.php` troque `BANCO_TIPO` para `'sqlite'`: o banco vira
+> um arquivo em `dados/` e não precisa configurar nada.
 
 ### Senha do painel
 
@@ -52,16 +68,9 @@ O painel mostra:
 
 ## Requisitos na hospedagem
 
-- PHP 7.4 ou superior (a HostGator já oferece 8.x) com a extensão `pdo_sqlite` (padrão).
-- A pasta `dados` precisa ter permissão de escrita (o padrão 755 do cPanel funciona,
-  porque o PHP roda com o seu usuário). Se aparecer "Erro interno", ajuste para 755 ou 775.
+- PHP 7.4 ou superior (a HostGator já oferece 8.x) com a extensão `pdo_mysql` (padrão).
+- Um banco MySQL criado no cPanel (Parte 1 acima).
 
-### Opcional: usar MySQL em vez de SQLite
-
-Se preferir um banco MySQL, crie o banco e o usuário em **cPanel → Bancos de Dados
-MySQL**, depois em `api/config.php` altere `BANCO_TIPO` para `'mysql'` e preencha
-`MYSQL_HOST`, `MYSQL_BANCO`, `MYSQL_USUARIO` e `MYSQL_SENHA`. As tabelas são criadas
-automaticamente.
 
 ## Logos e animação (skill `logo-motion`)
 
@@ -122,11 +131,11 @@ frente (coluna `edicao_video` no banco; o painel e o CSV mostram o resultado).
 
 ## Banco de dados
 
-Criado automaticamente pelo `api/db.php` na primeira visita à página (ou ao abrir
-`api/instalar.php`). A pasta `dados` vem só com o `.htaccess` de proteção e os arquivos de
-consulta `schema-sqlite.sql` e `schema-mysql.sql`; o arquivo `admoema-midia.sqlite` é
-gerado no servidor e nunca precisa ser enviado. Se `api/instalar.php` acusar falta de
-permissão, ajuste a pasta `dados` para 755 ou 775 no Gerenciador de Arquivos.
+Padrão: **MySQL** do servidor (phpMyAdmin). As tabelas são criadas automaticamente pelo
+`api/db.php` na primeira visita (ou ao abrir `api/instalar.php`); o arquivo
+`dados/schema-mysql.sql` cria as mesmas tabelas pelo phpMyAdmin, se preferir.
+Alternativa sem configuração: `BANCO_TIPO = 'sqlite'` grava tudo em `dados/admoema-midia.sqlite`
+(`dados/schema-sqlite.sql` para consulta).
 
 **Tabela `respostas`** — `id`, `nome`, `contato` (opcional), `frentes` (JSON com as
 frentes marcadas), `sabe_fazer` (pergunta 1), `quer_aprender` (pergunta 2),
