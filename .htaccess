@@ -1,0 +1,28 @@
+# .htaccess (raiz do projeto) — usado quando o projeto inteiro fica dentro do public_html
+# (ex.: public_html/midia). Encaminha tudo para a pasta public/ e bloqueia o resto.
+
+Options -Indexes -MultiViews
+ServerSignature Off
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloqueia pastas internas e arquivos sensíveis
+    RewriteRule ^(app|storage|sql|\.git)(/|$) - [F,L]
+    RewriteRule (^|/)\.(?!well-known/) - [F,L]
+    RewriteRule \.(md|sql|log|lock|env|example|ini)$ - [F,L]
+
+    # Encaminha para public/
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<FilesMatch "^\.|\.(md|sql|log|lock|example)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

@@ -1,0 +1,10 @@
+.env
+storage/fotos/*
+storage/thumbs/*
+storage/tmp/*
+storage/logs/*
+storage/install.lock
+!storage/**/.gitkeep
+!storage/.htaccess
+.DS_Store
+Thumbs.db
