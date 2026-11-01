@@ -3,7 +3,7 @@
 declare(strict_types=1);
 require dirname(__DIR__, 2) . '/app/bootstrap.php';
 
-$user = Auth::requireLogin();
+$user = Auth::requireUploader();
 @set_time_limit(120);
 
 // GET: quais partes deste envio já chegaram (para retomar após queda de conexão)

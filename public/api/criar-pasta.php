@@ -3,7 +3,7 @@
 declare(strict_types=1);
 require dirname(__DIR__, 2) . '/app/bootstrap.php';
 
-$user = Auth::requireLogin();
+$user = Auth::requireUploader();
 require_post();
 
 $date = EventNaming::parseDate($_POST['data'] ?? null);

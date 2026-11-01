@@ -1,5 +1,5 @@
 <?php
-// public/conta.php — trocar senha, ativar/desativar 2FA e códigos de recuperação
+// public/conta.php — trocar senha, 2FA, códigos de recuperação e redes sociais do próprio usuário
 declare(strict_types=1);
 require dirname(__DIR__) . '/app/bootstrap.php';
 
@@ -90,6 +90,42 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
     }
 
+    // ---------- Redes sociais (somente a própria conta; equipe da mídia) ----------
+    if (str_starts_with($action, 'rede_') || $action === 'assinatura') {
+        if (!Auth::canUpload($user) || $pending !== null) {
+            $errors[] = 'Seu perfil não pode publicar nas redes sociais.';
+        } elseif ($action === 'rede_facebook') {
+            $r = SocialService::connectFacebook((int) $user['id'], (string) ($_POST['token'] ?? ''));
+            $r['ok'] ? flash('sucesso', 'Facebook conectado: ' . $r['nome'] . '.') : ($errors[] = $r['erro']);
+        } elseif ($action === 'rede_instagram') {
+            $r = SocialService::connectInstagram((int) $user['id'], (string) ($_POST['token'] ?? ''), (string) ($_POST['ig_id'] ?? ''));
+            $r['ok'] ? flash('sucesso', 'Instagram conectado: ' . $r['nome'] . '.') : ($errors[] = $r['erro']);
+        } elseif ($action === 'rede_testar' || $action === 'rede_desconectar') {
+            $network = (string) ($_POST['rede'] ?? '');
+            $account = SocialService::accounts((int) $user['id'])[$network] ?? null;
+            if (!$account) {
+                $errors[] = 'Conta não encontrada.';
+            } elseif ($action === 'rede_desconectar') {
+                SocialService::disconnect((int) $user['id'], $network);
+                flash('info', SocialService::NETWORKS[$network] . ' desconectado. O token foi apagado do sistema.');
+            } else {
+                $r = SocialService::test($account);
+                $r['ok'] ? flash('sucesso', 'Conexão com ' . SocialService::NETWORKS[$network] . ' funcionando.') : ($errors[] = $r['erro']);
+            }
+        } elseif ($action === 'assinatura') {
+            $signature = trim(str_replace("\r\n", "\n", (string) ($_POST['assinatura'] ?? '')));
+            if (mb_strlen($signature) > 500) {
+                $errors[] = 'A assinatura pode ter no máximo 500 caracteres.';
+            } else {
+                Database::run('UPDATE users SET social_signature = ? WHERE id = ?', [$signature !== '' ? $signature : null, $user['id']]);
+                flash('sucesso', 'Assinatura das legendas salva.');
+            }
+        }
+        if (!$errors) {
+            redirect('conta.php#redes');
+        }
+    }
+
     if ($action === 'sair_todos') {
         Auth::revokeSessions((int) $user['id']);
         $_SESSION['session_version'] = (int) Database::value('SELECT session_version FROM users WHERE id = ?', [$user['id']]);
@@ -122,7 +158,7 @@ render_header('Minha conta', ['active' => 'conta', 'user' => $user]);
 <div class="page-head">
     <div>
         <h1>Minha conta</h1>
-        <p class="muted"><?= e($user['name']) ?> · <?= e($user['email']) ?> · <?= $user['role'] === 'admin' ? 'Administrador' : 'Membro da mídia' ?></p>
+        <p class="muted"><?= e($user['name']) ?> · <?= e($user['email']) ?> · <?= e(Auth::ROLES[$user['role']] ?? $user['role']) ?></p>
     </div>
 </div>
 
@@ -213,6 +249,67 @@ render_header('Minha conta', ['active' => 'conta', 'user' => $user]);
     <?php endif; ?>
 </section>
 </div>
+
+<?php if (Auth::canUpload($user) && $pending === null):
+    $social = SocialService::accounts((int) $user['id']); ?>
+<section class="panel" id="redes">
+    <h2>Redes sociais</h2>
+    <p class="muted">Conecte <strong>a sua</strong> Página do Facebook e/ou conta profissional do Instagram para publicar as fotos direto daqui.
+        Só você usa essas conexões; nem o administrador vê os seus tokens (ficam criptografados).
+        <a href="ajuda-redes.php">Como conseguir os tokens (passo a passo)</a></p>
+    <div class="social-grid">
+        <?php foreach (['facebook' => ['fb', 'f'], 'instagram' => ['ig', '◎']] as $net => [$cls, $letter]):
+            $acc = $social[$net] ?? null; ?>
+        <div class="social-card">
+            <h3><span class="social-logo <?= $cls ?>" aria-hidden="true"><?= e($letter) ?></span><?= e(SocialService::NETWORKS[$net]) ?></h3>
+            <?php if ($acc): ?>
+                <div class="social-on">
+                    Conectado como <strong><?= e($acc['display_name']) ?></strong><br>
+                    <span class="muted small">Token <?= e($acc['token_hint']) ?> · atualizado em <?= e(date('d/m/Y', strtotime($acc['token_updated_at']))) ?>
+                    <?= $acc['token_expires_at'] ? ' · expira em ' . e(date('d/m/Y', strtotime($acc['token_expires_at']))) : '' ?></span>
+                    <?php if ($acc['last_error']): ?><div class="alert alert-erro small">Último erro: <?= e($acc['last_error']) ?></div><?php endif; ?>
+                </div>
+                <div class="inline-actions">
+                    <?php foreach (['rede_testar' => 'Testar conexão', 'rede_desconectar' => 'Desconectar'] as $act => $label): ?>
+                        <form method="post" action="conta.php"<?= $act === 'rede_desconectar' ? ' data-confirm="Desconectar e apagar o token do sistema?"' : '' ?>>
+                            <?= Csrf::field() ?>
+                            <input type="hidden" name="acao" value="<?= $act ?>">
+                            <input type="hidden" name="rede" value="<?= $net ?>">
+                            <button type="submit" class="btn btn-small <?= $act === 'rede_desconectar' ? 'btn-ghost' : 'btn-ghost' ?>"><?= e($label) ?></button>
+                        </form>
+                    <?php endforeach; ?>
+                </div>
+                <details class="small"><summary>Trocar o token</summary>
+            <?php endif; ?>
+            <form method="post" action="conta.php" autocomplete="off">
+                <?= Csrf::field() ?>
+                <input type="hidden" name="acao" value="rede_<?= $net ?>">
+                <?php if ($net === 'facebook'): ?>
+                    <label class="field"><span>Token de acesso da Página</span>
+                        <input type="password" name="token" required autocomplete="off" spellcheck="false" placeholder="EAAG…"></label>
+                    <p class="muted small">O sistema descobre sozinho qual é a Página. Use o token <em>da Página</em>, não o do seu perfil pessoal.</p>
+                <?php else: ?>
+                    <label class="field"><span>Token de acesso do Instagram</span>
+                        <input type="password" name="token" required autocomplete="off" spellcheck="false" placeholder="IGAA… ou EAAG…"></label>
+                    <label class="field"><span>ID da conta do Instagram <small class="muted">(só se o token começar com EAA)</small></span>
+                        <input type="text" name="ig_id" inputmode="numeric" pattern="\d*" maxlength="40" autocomplete="off"></label>
+                    <p class="muted small">A conta precisa ser <strong>profissional</strong> (Criador de conteúdo ou Empresa).</p>
+                <?php endif; ?>
+                <button type="submit" class="btn btn-primary btn-small"><?= $acc ? 'Atualizar token' : 'Conectar' ?></button>
+            </form>
+            <?php if ($acc): ?></details><?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <form method="post" action="conta.php" class="inline-form">
+        <?= Csrf::field() ?>
+        <input type="hidden" name="acao" value="assinatura">
+        <label class="field"><span>Assinatura padrão das legendas <small class="muted">(entra no fim de toda legenda; você pode apagar na hora)</small></span>
+            <textarea name="assinatura" rows="2" maxlength="500" placeholder="#ADMoema #AssembleiaDeDeus #MinistérioDoBelém"><?= e($user['social_signature'] ?? '') ?></textarea></label>
+        <button type="submit" class="btn btn-ghost btn-small">Salvar assinatura</button>
+    </form>
+</section>
+<?php endif; ?>
 
 <section class="panel">
     <h2>Sessões</h2>

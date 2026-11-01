@@ -29,6 +29,29 @@ enviar e organizar as fotos dos cultos e eventos. Este é o primeiro módulo do 
 - Galeria com miniaturas, download individual e **download da pasta inteira em .zip**.
 - Gestão de usuários e registro de atividades (inclusive tentativas de invasão).
 
+### Novidades da versão 1.1
+
+- **Área de visualização para os membros da igreja**: novo perfil *Membro da igreja (visualiza)*.
+  Entra com login, vê os eventos e as fotos em tela cheia (setas, deslizar no celular), baixa
+  e melhora as fotos. Não envia, não exclui e não publica. Recebe sempre a versão sem dados
+  de localização (GPS/EXIF), nunca o arquivo original.
+- **Melhorar foto** (para todos): editor com um botão por ferramenta: *Automático*, *Brilho*
+  (exposição e brilho), *Contraste* (e efeito fosco), *Cor* (saturação e vibração),
+  *Temperatura* (e matiz), *Luz e sombra* (clarear sombras, recuperar partes estouradas),
+  *Nitidez*, *Vinheta*, *Estilos* (12 prontos, incluindo “Igreja (pouca luz)”, Retrato, Cinema,
+  P&B, Vintage), *Recortar* (1:1, Instagram 4:5, Stories 9:16, 16:9, 3:2, com arraste para enquadrar)
+  e *Girar/Espelhar*. Tem “segure para ver o antes”, desfazer e voltar ao original.
+  O processamento é feito no próprio navegador (não pesa no servidor). A equipe da mídia salva
+  a versão melhorada na pasta (a original é mantida, com selo “Editada”); membros baixam.
+- **Publicar nas redes sociais**: cada pessoa da equipe conecta a **própria** Página do Facebook
+  e/ou conta profissional do Instagram em *Minha conta → Redes sociais* (o administrador não
+  precisa configurar nada e não vê os tokens). Depois, no visualizador: *Publicar nas redes*,
+  escolhe as contas, escreve a legenda (com assinatura padrão) e publica. Mostra o link da
+  publicação e marca a foto como “Publicada”. Passo a passo para gerar os tokens: página
+  *Ajuda* dentro do sistema (`ajuda-redes.php`).
+- **Compartilhar pelo celular** (sem configurar nada): abre o menu do aparelho (WhatsApp,
+  Instagram, Stories…) com a foto pronta.
+
 ## Segurança aplicada
 
 | Ameaça | Proteção |
@@ -47,8 +70,15 @@ enviar e organizar as fotos dos cultos e eventos. Este é o primeiro módulo do 
 | Acesso direto aos arquivos | `.htaccess` bloqueia `app/`, `storage/`, `sql/`, `.env`, `.git` (testado no Apache) |
 | SQL injection | PDO com prepared statements em todas as consultas |
 | Robôs no login | Campo-armadilha invisível |
+| Tokens das redes sociais | Criptografados com libsodium (APP_KEY); nunca voltam para a tela; cada token só é usado pela própria pessoa; “Desconectar” apaga |
+| Foto pública para o Instagram | O Instagram precisa baixar a foto: o sistema cria uma cópia JPG temporária com nome aleatório de 160 bits, sem metadados, apagada logo após publicar (e em no máximo 1 hora) |
+| Membro da igreja | Bloqueado no servidor para envio, criação de pasta, exclusão, .zip e publicação (não só escondido na tela) |
 
 ## Instalação no HostGator (sem terminal)
+
+### Já tinha a versão 1.0 instalada?
+Importe `sql/atualizacao-1.1.sql` no phpMyAdmin (uma vez), envie os arquivos novos por cima e
+acrescente no `.env`: `META_GRAPH_VERSION=v26.0`. Instalação nova: siga os passos abaixo.
 
 ### 1. Banco de dados
 1. cPanel → **Bancos de dados MySQL** → crie o banco (ex.: `admoema_midia`).

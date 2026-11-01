@@ -3,7 +3,7 @@
 declare(strict_types=1);
 require dirname(__DIR__, 2) . '/app/bootstrap.php';
 
-Auth::requireLogin();
+Auth::requireUploader();
 
 $date = EventNaming::parseDate($_GET['data'] ?? null);
 if (!$date) {

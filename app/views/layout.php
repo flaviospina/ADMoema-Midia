@@ -6,6 +6,7 @@ function render_header(string $title, array $options = []): void
 {
     $user = $options['user'] ?? Auth::user();
     $bare = $options['bare'] ?? false; // telas de login, sem menu
+    $full = $options['full'] ?? false; // tela cheia (editor)
     $active = $options['active'] ?? '';
     $pending = $user ? Auth::pendingRequirement() : null;
     ?>
@@ -20,7 +21,7 @@ function render_header(string $title, array $options = []): void
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/app.css?v=<?= APP_VERSION ?>">
 </head>
-<body class="<?= $bare ? 'is-bare' : '' ?>">
+<body class="<?= $bare ? 'is-bare' : '' ?><?= $full ? 'is-full' : '' ?>">
 <?php if (!$bare && $user): ?>
 <header class="topbar">
     <a class="brand" href="index.php">
@@ -30,7 +31,9 @@ function render_header(string $title, array $options = []): void
     <nav class="nav" aria-label="Menu principal">
         <?php if ($pending === null): ?>
             <a href="index.php" class="<?= $active === 'eventos' ? 'is-active' : '' ?>">Eventos</a>
-            <a href="novo-envio.php" class="<?= $active === 'novo' ? 'is-active' : '' ?>">Enviar fotos</a>
+            <?php if (Auth::canUpload($user)): ?>
+                <a href="novo-envio.php" class="<?= $active === 'novo' ? 'is-active' : '' ?>">Enviar fotos</a>
+            <?php endif; ?>
             <?php if ($user['role'] === 'admin'): ?>
                 <a href="usuarios.php" class="<?= $active === 'usuarios' ? 'is-active' : '' ?>">Usuários</a>
                 <a href="auditoria.php" class="<?= $active === 'auditoria' ? 'is-active' : '' ?>">Registro</a>
@@ -44,7 +47,7 @@ function render_header(string $title, array $options = []): void
     </nav>
 </header>
 <?php endif; ?>
-<main class="<?= $bare ? 'auth-main' : 'container' ?>">
+<main class="<?= $bare ? 'auth-main' : ($full ? 'editor-main' : 'container') ?>">
 <?php foreach (take_flashes() as $flash): ?>
     <div class="alert alert-<?= e($flash['type']) ?>" role="status"><?= e($flash['message']) ?></div>
 <?php endforeach;

@@ -63,6 +63,16 @@ final class PhotoService
         $size = filter_var($input['size'] ?? null, FILTER_VALIDATE_INT);
         $name = self::cleanOriginalName((string) ($input['name'] ?? ''));
 
+        // Versão editada de uma foto existente (mesma pasta)
+        $parent = null;
+        if (!empty($input['parent_id'])) {
+            $parentId = filter_var($input['parent_id'], FILTER_VALIDATE_INT);
+            $parent = $parentId ? self::find($parentId) : null;
+            if (!$parent || (int) $parent['folder_id'] !== (int) $folder['id']) {
+                return ['ok' => false, 'erro' => 'A foto original não foi encontrada.'];
+            }
+        }
+
         if (!preg_match('/^[a-f0-9]{32}$/', $uploadId) || $index === false || $total === false || $size === false) {
             return ['ok' => false, 'erro' => 'Dados do envio inválidos.'];
         }
@@ -96,7 +106,7 @@ final class PhotoService
 
         // Metadados do envio: devem ser os mesmos em todas as partes
         $metaFile = $dir . '/meta.json';
-        $meta = ['folder_id' => (int) $folder['id'], 'name' => $name, 'size' => $size, 'total' => $total];
+        $meta = ['folder_id' => (int) $folder['id'], 'name' => $name, 'size' => $size, 'total' => $total, 'parent_id' => $parent ? (int) $parent['id'] : null];
         if (is_file($metaFile)) {
             $saved = json_decode((string) file_get_contents($metaFile), true);
             if ($saved !== $meta) {
@@ -137,7 +147,7 @@ final class PhotoService
             if (filesize($assembled) !== $size) {
                 return ['ok' => false, 'erro' => 'O arquivo montado ficou com tamanho diferente do original. Envie de novo.'];
             }
-            return self::processAssembled($folder, $userId, $assembled, $name, $ext);
+            return self::processAssembled($folder, $userId, $assembled, $name, $ext, $parent);
         } finally {
             flock($lock, LOCK_UN);
             fclose($lock);
@@ -146,7 +156,7 @@ final class PhotoService
     }
 
     /** Valida o conteúdo real do arquivo, grava na pasta do evento e registra no banco. */
-    private static function processAssembled(array $folder, int $userId, string $path, string $originalName, string $ext): array
+    private static function processAssembled(array $folder, int $userId, string $path, string $originalName, string $ext, ?array $parent = null): array
     {
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime = (string) $finfo->file($path);
@@ -193,16 +203,19 @@ final class PhotoService
         }
         @chmod($target, 0640);
 
-        $takenAt = $mime === 'image/jpeg' ? self::exifDate($target) : null;
+        // Versão editada herda a data da original (fica ao lado dela na galeria)
+        $takenAt = $parent ? $parent['taken_at'] : ($mime === 'image/jpeg' ? self::exifDate($target) : null);
         $hasThumb = self::makeThumbnail($target, $mime, (int) $folder['id'], $storedName);
 
         Database::run(
-            'INSERT INTO photos (folder_id, user_id, original_name, stored_name, mime, size_bytes, width, height, sha256, taken_at, has_thumb)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-            [$folder['id'], $userId, $originalName, $storedName, $mime, filesize($target), $width, $height, $sha256, $takenAt, $hasThumb ? 1 : 0]
+            'INSERT INTO photos (folder_id, parent_id, user_id, original_name, stored_name, mime, size_bytes, width, height, sha256, taken_at, has_thumb)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+            [$folder['id'], $parent ? $parent['id'] : null, $userId, $originalName, $storedName, $mime, filesize($target), $width, $height, $sha256, $takenAt, $hasThumb ? 1 : 0]
         );
         $id = Database::lastId();
-        Logger::audit('foto_enviada', 'photo', $id, ['pasta' => (int) $folder['id'], 'nome' => $originalName]);
+        Logger::audit($parent ? 'foto_editada' : 'foto_enviada', 'photo', $id, array_filter([
+            'pasta' => (int) $folder['id'], 'nome' => $originalName, 'original' => $parent ? (int) $parent['id'] : null,
+        ]));
 
         return ['ok' => true, 'status' => 'concluido', 'foto' => ['id' => $id, 'thumb' => $hasThumb]];
     }
@@ -230,6 +243,20 @@ final class PhotoService
 
     /** Miniatura JPEG sem metadados (remove GPS/EXIF), já com a rotação correta. */
     private static function makeThumbnail(string $source, string $mime, int $folderId, string $storedName): bool
+    {
+        $dir = storage_path('thumbs/' . $folderId);
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0750, true);
+        }
+        return self::resizeToJpeg($source, $mime, $dir . '/' . pathinfo($storedName, PATHINFO_FILENAME) . '.jpg', self::THUMB_SIZE, 82);
+    }
+
+    /**
+     * Gera um JPEG redimensionado (lado maior = $maxSide), com rotação corrigida e
+     * SEM metadados (EXIF/GPS). Usado em miniaturas, visualização e redes sociais.
+     * $fit: null | ['minRatio' => x, 'maxRatio' => y] para recortar ao centro.
+     */
+    public static function resizeToJpeg(string $source, string $mime, string $dest, int $maxSide, int $quality, ?array $fit = null): bool
     {
         if (!extension_loaded('gd')) {
             return false;
@@ -268,21 +295,52 @@ final class PhotoService
 
         $w = imagesx($img);
         $h = imagesy($img);
-        $scale = min(1, self::THUMB_SIZE / max($w, $h));
+        // Recorte central para caber na proporção exigida (ex.: Instagram)
+        $sx = $sy = 0;
+        if ($fit !== null) {
+            $ratio = $w / $h;
+            if ($ratio < $fit['minRatio']) {
+                $newH = (int) floor($w / $fit['minRatio']);
+                $sy = intdiv($h - $newH, 2);
+                $h = $newH;
+            } elseif ($ratio > $fit['maxRatio']) {
+                $newW = (int) floor($h * $fit['maxRatio']);
+                $sx = intdiv($w - $newW, 2);
+                $w = $newW;
+            }
+        }
+        $scale = min(1, $maxSide / max($w, $h));
         $tw = max(1, (int) round($w * $scale));
         $th = max(1, (int) round($h * $scale));
-        $thumb = imagecreatetruecolor($tw, $th);
-        imagefill($thumb, 0, 0, imagecolorallocate($thumb, 255, 255, 255));
-        imagecopyresampled($thumb, $img, 0, 0, 0, 0, $tw, $th, $w, $h);
+        $out = imagecreatetruecolor($tw, $th);
+        imagefill($out, 0, 0, imagecolorallocate($out, 255, 255, 255));
+        imagecopyresampled($out, $img, 0, 0, $sx, $sy, $tw, $th, $w, $h);
         imagedestroy($img);
 
-        $dir = storage_path('thumbs/' . $folderId);
+        imageinterlace($out, true);
+        $ok = imagejpeg($out, $dest, $quality);
+        imagedestroy($out);
+        if ($ok) {
+            @chmod($dest, 0640);
+        }
+        return $ok;
+    }
+
+    /** Versão para tela (até 2048 px, sem metadados). Gerada na primeira visualização. */
+    public static function viewPath(array $photo, array $folder): ?string
+    {
+        $path = storage_path('thumbs/' . $photo['folder_id'] . '/' . pathinfo($photo['stored_name'], PATHINFO_FILENAME) . '_v.jpg');
+        if (is_file($path)) {
+            return $path;
+        }
+        if ($photo['mime'] === 'image/heic') {
+            return null;
+        }
+        $dir = dirname($path);
         if (!is_dir($dir)) {
             @mkdir($dir, 0750, true);
         }
-        $ok = imagejpeg($thumb, $dir . '/' . pathinfo($storedName, PATHINFO_FILENAME) . '.jpg', 82);
-        imagedestroy($thumb);
-        return $ok;
+        return self::resizeToJpeg(self::originalPath($photo, $folder), $photo['mime'], $path, 2048, 86) ? $path : null;
     }
 
     public static function thumbPath(array $photo): string
@@ -303,9 +361,11 @@ final class PhotoService
     public static function listByFolder(int $folderId): array
     {
         return Database::all(
-            'SELECT p.*, u.name AS user_name FROM photos p JOIN users u ON u.id = p.user_id
+            'SELECT p.*, u.name AS user_name,
+                    (SELECT COUNT(*) FROM social_posts s WHERE s.photo_id = p.id AND s.status = \'publicado\') AS posts
+               FROM photos p JOIN users u ON u.id = p.user_id
               WHERE p.folder_id = ? AND p.deleted_at IS NULL
-              ORDER BY COALESCE(p.taken_at, p.created_at), p.id',
+              ORDER BY COALESCE(p.taken_at, p.created_at), COALESCE(p.parent_id, p.id), p.id',
             [$folderId]
         );
     }

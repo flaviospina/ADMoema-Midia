@@ -15,7 +15,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if ($action === 'criar') {
         $name = trim(preg_replace('/\s+/u', ' ', (string) ($_POST['nome'] ?? '')));
         $email = mb_strtolower(trim((string) ($_POST['email'] ?? '')));
-        $role = ($_POST['papel'] ?? '') === 'admin' ? 'admin' : 'membro';
+        $role = array_key_exists($_POST['papel'] ?? '', Auth::ROLES) ? $_POST['papel'] : 'visualizador';
         if (mb_strlen($name) < 3 || mb_strlen($name) > 120) {
             $errors[] = 'Informe o nome completo (3 a 120 caracteres).';
         }
@@ -54,7 +54,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 flash('sucesso', $target['name'] . ($active ? ' foi reativado.' : ' foi desativado e desconectado.'));
             }
         } elseif ($action === 'alterar_papel') {
-            $role = ($_POST['papel'] ?? '') === 'admin' ? 'admin' : 'membro';
+            $role = array_key_exists($_POST['papel'] ?? '', Auth::ROLES) ? $_POST['papel'] : 'visualizador';
             if (($isSelf || $isLastAdmin) && $role !== 'admin') {
                 $errors[] = 'Você não pode remover o próprio acesso de administrador nem o do último administrador.';
             } elseif ($role !== $target['role']) {
@@ -106,7 +106,7 @@ render_header('Usuários', ['active' => 'usuarios']);
 <div class="page-head">
     <div>
         <h1>Usuários</h1>
-        <p class="muted">Quem pode entrar no sistema e enviar fotos.</p>
+        <p class="muted">Quem pode entrar no sistema. <strong>Membro da igreja</strong> só vê e baixa as fotos; <strong>Equipe da mídia</strong> também envia, edita e publica nas redes.</p>
     </div>
 </div>
 
@@ -131,7 +131,11 @@ render_header('Usuários', ['active' => 'usuarios']);
         <label class="field"><span>Nome completo</span><input type="text" name="nome" required maxlength="120"></label>
         <label class="field"><span>E-mail</span><input type="email" name="email" required maxlength="190"></label>
         <label class="field"><span>Perfil</span>
-            <select name="papel"><option value="membro">Membro da mídia</option><option value="admin">Administrador</option></select></label>
+            <select name="papel">
+                <option value="visualizador">Membro da igreja (só visualiza)</option>
+                <option value="membro">Equipe da mídia (envia fotos)</option>
+                <option value="admin">Administrador</option>
+            </select></label>
         <button type="submit" class="btn btn-primary">Criar e gerar senha</button>
     </form>
 </section>
@@ -151,7 +155,8 @@ render_header('Usuários', ['active' => 'usuarios']);
                         <input type="hidden" name="acao" value="alterar_papel">
                         <input type="hidden" name="id" value="<?= (int) $u['id'] ?>">
                         <select name="papel" aria-label="Perfil de <?= e($u['name']) ?>">
-                            <option value="membro" <?= $u['role'] === 'membro' ? 'selected' : '' ?>>Membro</option>
+                            <option value="visualizador" <?= $u['role'] === 'visualizador' ? 'selected' : '' ?>>Visualiza</option>
+                            <option value="membro" <?= $u['role'] === 'membro' ? 'selected' : '' ?>>Equipe da mídia</option>
                             <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
                         </select>
                     </form>

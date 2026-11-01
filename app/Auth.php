@@ -204,6 +204,35 @@ final class Auth
         return $u !== null && $u['role'] === 'admin';
     }
 
+    /** Nomes dos perfis exibidos na tela. */
+    public const ROLES = [
+        'admin'        => 'Administrador',
+        'membro'       => 'Equipe da mídia',
+        'visualizador' => 'Membro da igreja (visualiza)',
+    ];
+
+    /** Pode enviar fotos, criar pastas, salvar edições e publicar nas redes. */
+    public static function canUpload(?array $user = null): bool
+    {
+        $user ??= self::user();
+        return $user !== null && in_array($user['role'], ['admin', 'membro'], true);
+    }
+
+    /** Exige perfil da equipe da mídia (admin ou membro). */
+    public static function requireUploader(): array
+    {
+        $user = self::requireLogin();
+        if (!self::canUpload($user)) {
+            Logger::audit('acesso_negado', null, null, ['uri' => $_SERVER['REQUEST_URI'] ?? '']);
+            if (is_api_request()) {
+                json_response(['ok' => false, 'erro' => 'Seu perfil permite apenas visualizar as fotos.'], 403);
+            }
+            flash('erro', 'Seu perfil permite apenas visualizar as fotos.');
+            redirect('index.php');
+        }
+        return $user;
+    }
+
     /** O usuário precisa trocar a senha ou ativar o 2FA antes de usar o sistema? */
     public static function pendingRequirement(): ?string
     {

@@ -90,23 +90,5 @@ window.App = (() => {
 
   document.querySelectorAll('.js-print').forEach((btn) => btn.addEventListener('click', () => window.print()));
 
-  // Excluir foto
-  document.addEventListener('click', async (ev) => {
-    const btn = ev.target.closest('.js-delete');
-    if (!btn) return;
-    if (!window.confirm(`Excluir a foto "${btn.dataset.name}"?`)) return;
-    btn.disabled = true;
-    const res = await post('api/excluir-foto.php', { id: btn.dataset.id });
-    if (res.ok) {
-      document.getElementById(`photo-${btn.dataset.id}`)?.remove();
-      const counter = document.getElementById('photo-count');
-      if (counter) counter.textContent = String(Math.max(0, Number(counter.textContent) - 1));
-      toast('Foto excluída.', 'sucesso');
-    } else {
-      btn.disabled = false;
-      toast(res.erro || 'Não foi possível excluir.', 'erro');
-    }
-  });
-
   return { post, getJson, toast, csrf };
 })();

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 define('APP_ROOT', dirname(__DIR__));
-define('APP_VERSION', '1.0.0');
+define('APP_VERSION', '1.1.0');
 
 require __DIR__ . '/config.php';
 require __DIR__ . '/views/layout.php';
@@ -129,4 +129,7 @@ function format_date_br(string $date): string
 Security::enforceHttps();
 Security::sendHeaders();
 header('Cache-Control: no-store, private');
-Session::start();
+// Endpoints públicos (ex.: foto temporária para o Instagram) não abrem sessão
+if (!defined('NO_SESSION')) {
+    Session::start();
+}

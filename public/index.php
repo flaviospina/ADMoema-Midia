@@ -16,7 +16,9 @@ render_header('Eventos', ['active' => 'eventos']);
         <h1>Eventos</h1>
         <p class="muted">Fotos dos cultos e eventos, organizadas por data.</p>
     </div>
-    <a href="novo-envio.php" class="btn btn-primary">+ Enviar fotos</a>
+    <?php if (Auth::canUpload($user)): ?>
+        <a href="novo-envio.php" class="btn btn-primary">+ Enviar fotos</a>
+    <?php endif; ?>
 </div>
 
 <?php if ($years): ?>
@@ -30,7 +32,7 @@ render_header('Eventos', ['active' => 'eventos']);
 <?php if (!$folders): ?>
     <div class="empty">
         <p><strong>Nenhum evento em <?= e($year) ?> ainda.</strong></p>
-        <p class="muted">Clique em “Enviar fotos” para criar a primeira pasta.</p>
+        <p class="muted"><?= Auth::canUpload($user) ? 'Clique em “Enviar fotos” para criar a primeira pasta.' : 'As fotos aparecem aqui assim que a equipe da mídia enviar.' ?></p>
     </div>
 <?php else: ?>
     <ul class="folder-grid">

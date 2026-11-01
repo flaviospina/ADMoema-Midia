@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     name                 VARCHAR(120) NOT NULL,
     email                VARCHAR(190) NOT NULL,
     password_hash        VARCHAR(255) NOT NULL,
-    role                 ENUM('admin','membro') NOT NULL DEFAULT 'membro',
+    role                 ENUM('admin','membro','visualizador') NOT NULL DEFAULT 'membro',
     is_active            TINYINT(1) NOT NULL DEFAULT 1,
     must_change_password TINYINT(1) NOT NULL DEFAULT 1,
     totp_secret_enc      VARCHAR(255) NULL,
@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
     last_login_at        DATETIME NULL,
     last_login_ip        VARCHAR(45) NULL,
     password_changed_at  DATETIME NULL,
+    social_signature     VARCHAR(500) NULL,
     created_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -64,6 +65,7 @@ CREATE TABLE IF NOT EXISTS folders (
 CREATE TABLE IF NOT EXISTS photos (
     id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
     folder_id     INT UNSIGNED NOT NULL,
+    parent_id     INT UNSIGNED NULL,
     user_id       INT UNSIGNED NOT NULL,
     original_name VARCHAR(255) NOT NULL,
     stored_name   VARCHAR(80) NOT NULL,
@@ -80,6 +82,7 @@ CREATE TABLE IF NOT EXISTS photos (
     PRIMARY KEY (id),
     KEY idx_photos_folder (folder_id, deleted_at),
     KEY idx_photos_hash (folder_id, sha256),
+    KEY idx_photos_parent (parent_id),
     CONSTRAINT fk_photo_folder FOREIGN KEY (folder_id) REFERENCES folders (id),
     CONSTRAINT fk_photo_user FOREIGN KEY (user_id) REFERENCES users (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -98,4 +101,43 @@ CREATE TABLE IF NOT EXISTS audit_log (
     PRIMARY KEY (id),
     KEY idx_audit_user (user_id, created_at),
     KEY idx_audit_action (action, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Contas de redes sociais de cada usuário (o token fica criptografado com a APP_KEY)
+CREATE TABLE IF NOT EXISTS social_accounts (
+    id               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id          INT UNSIGNED NOT NULL,
+    network          ENUM('facebook','instagram') NOT NULL,
+    api_host         ENUM('facebook','instagram') NOT NULL,
+    external_id      VARCHAR(64) NOT NULL,
+    display_name     VARCHAR(190) NOT NULL,
+    token_enc        TEXT NOT NULL,
+    token_hint       VARCHAR(12) NOT NULL,
+    token_expires_at DATETIME NULL,
+    token_updated_at DATETIME NOT NULL,
+    last_error       VARCHAR(500) NULL,
+    created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_social_user_network (user_id, network),
+    CONSTRAINT fk_social_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Publicações feitas pelo sistema
+CREATE TABLE IF NOT EXISTS social_posts (
+    id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id      INT UNSIGNED NOT NULL,
+    photo_id     INT UNSIGNED NOT NULL,
+    network      ENUM('facebook','instagram') NOT NULL,
+    status       ENUM('publicado','erro') NOT NULL,
+    external_id  VARCHAR(64) NULL,
+    permalink    VARCHAR(500) NULL,
+    caption      TEXT NULL,
+    error        VARCHAR(500) NULL,
+    created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_posts_photo (photo_id),
+    KEY idx_posts_user (user_id, created_at),
+    CONSTRAINT fk_post_user FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT fk_post_photo FOREIGN KEY (photo_id) REFERENCES photos (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

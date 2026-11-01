@@ -15,9 +15,11 @@ $labels = [
     'usuario_papel' => 'Perfil alterado', 'usuario_desbloqueado' => 'Usuário desbloqueado', 'sessoes_encerradas' => 'Encerrou sessões',
     'pasta_criada' => 'Pasta criada', 'foto_enviada' => 'Foto enviada', 'foto_excluida' => 'Foto excluída',
     'foto_baixada' => 'Foto baixada', 'pasta_baixada_zip' => 'Pasta baixada (zip)', 'upload_rejeitado' => 'Arquivo rejeitado',
+    'foto_editada' => 'Versão melhorada salva', 'rede_conectada' => 'Rede social conectada', 'rede_desconectada' => 'Rede social desconectada',
+    'rede_publicado' => 'Publicada na rede social', 'rede_falhou' => 'Falha ao publicar', 'rede_token_renovado' => 'Token renovado',
     'acesso_negado' => 'Acesso negado', 'csrf_invalido' => 'Formulário inválido', 'instalacao' => 'Instalação',
 ];
-$security = ['login_falhou', 'conta_bloqueada', 'login_ip_bloqueado', 'login_robo', '2fa_falhou', 'acesso_negado', 'csrf_invalido', 'upload_rejeitado', 'troca_senha_falhou'];
+$security = ['login_falhou', 'conta_bloqueada', 'login_ip_bloqueado', 'login_robo', '2fa_falhou', 'acesso_negado', 'csrf_invalido', 'upload_rejeitado', 'troca_senha_falhou', 'rede_falhou'];
 
 $filter = ($_GET['f'] ?? '') === 'seguranca' ? 'seguranca' : 'todos';
 $page = max(1, (int) ($_GET['p'] ?? 1));

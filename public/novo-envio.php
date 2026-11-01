@@ -3,7 +3,7 @@
 declare(strict_types=1);
 require dirname(__DIR__) . '/app/bootstrap.php';
 
-$user = Auth::requireLogin();
+$user = Auth::requireUploader();
 $today = date('Y-m-d');
 
 render_header('Enviar fotos', ['active' => 'novo']);

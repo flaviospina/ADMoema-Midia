@@ -32,6 +32,21 @@ Responsável: Flávio Roberto Spina (IT Thrive). Branch atual: `feature/envio-fo
 Há MariaDB + PHP embutido: `php -S 127.0.0.1:8080 -t public` com `.env` em `APP_ENV=local`.
 Teste o `.htaccess` também no Apache, com o projeto em subpasta (como em `public_html/midia`).
 
+## Perfis (Auth::ROLES)
+- `admin`, `membro` (equipe da mídia: envia, edita, publica) — `Auth::canUpload()` / `Auth::requireUploader()`.
+- `visualizador` (membro da igreja): só vê, baixa a versão sem metadados e usa o editor para baixar.
+
+## Módulos da v1.1
+- Visualizador em tela cheia: `public/assets/js/viewer.js` (também publica e compartilha).
+- Editor: `editar.php` + `photo-filters.js` (processamento puro em JS, LUTs) + `editor.js`.
+  Versão salva = nova foto com `photos.parent_id` apontando para a original.
+- Redes sociais: `app/SocialService.php` (Graph API via cURL, `META_GRAPH_VERSION`).
+  Tokens por usuário em `social_accounts` (criptografados). Instagram baixa a foto de
+  `api/publico.php?f=<40 hex>` (arquivo temporário em storage/tmp/social).
+  Para testar sem a Meta: `APP_ENV=local` + `META_API_BASE_OVERRIDE=http://127.0.0.1:9999` (servidor simulado).
+- Envio em partes compartilhado: `chunk-upload.js` (uploader e editor).
+- Mudanças de banco: atualizar `sql/schema.sql` E criar `sql/atualizacao-X.Y.sql` (MySQL 5.7 não tem ADD COLUMN IF NOT EXISTS).
+
 ## Próximos módulos previstos (não implementados)
 Membros da mídia, escala de eventos, pedidos e aprovação de artes, repositório geral de arquivos,
-direito de imagem, integração n8n/WhatsApp.
+direito de imagem, integração n8n/WhatsApp, convite por link para membros da igreja.

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 require dirname(__DIR__, 2) . '/app/bootstrap.php';
 
-Auth::requireLogin();
+Auth::requireUploader();
 
 $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
 $folder = $id ? FolderService::find($id) : null;
