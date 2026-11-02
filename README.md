@@ -164,6 +164,7 @@ As datas usam o fuso `America/Sao_Paulo` (ajustável em `api/config.php`).
 ## Estrutura
 
 ```
+tutorial-gerencial.html  proposta de uso para o Pr. Elias (arquivo único, abre em qualquer navegador)
 index.php         landing page (com a abertura animada e as meta tags de compartilhamento)
 intro-splash.*    animação de abertura da logo (gerada pela skill logo-motion)
 img/              logo-midia.svg, logo-belem.png (coloque aqui) e vinheta-midia.mp4

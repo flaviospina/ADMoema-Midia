@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta de uso · Ministério de Mídia ADMoema</title>
+<meta name="description" content="Tutorial gerencial para o Pr. Elias: o que a ferramenta do Ministério de Mídia ADMoema faz, facilidades, limites, prós e contras, e proposta de uso em fases.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-950: #061224; --navy-900: #0b1f3a; --navy-800: #112a4d; --navy-700: #1a3a66;
+    --ouro-500: #d4a72c; --ouro-400: #e6bd4a; --ouro-300: #f2d27a;
+    --areia-50: #faf7f0; --areia-100: #f3eee2; --areia-200: #e6dfcd;
+    --cinza-700: #3b4657; --cinza-500: #64748b; --branco: #fff;
+    --verde: #2fbf71; --vermelho: #e5484d; --ambar: #f59e0b;
+    --fonte-texto: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --fonte-titulo: "Fraunces", Georgia, "Times New Roman", serif;
+    --raio: 18px; --raio-sm: 12px; --sombra: 0 20px 50px -20px rgba(6,18,36,.35); --largura: 980px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: var(--fonte-texto); font-size: 17px; line-height: 1.65; color: var(--cinza-700); background: var(--areia-50); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4 { margin: 0; font-family: var(--fonte-titulo); font-weight: 600; line-height: 1.15; letter-spacing: -.01em; color: var(--navy-900); }
+  p { margin: 0 0 1em; } p:last-child { margin-bottom: 0; }
+  a { color: var(--navy-900); }
+  ul, ol { margin: 0 0 1em; padding-left: 1.25rem; }
+  li { margin-bottom: .35rem; }
+  strong { color: var(--navy-900); }
+  .container { width: min(100% - 2.5rem, var(--largura)); margin-inline: auto; }
+  .grad { background: linear-gradient(120deg, var(--ouro-300), var(--ouro-500) 55%, #b9891a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* capa */
+  .capa { position: relative; overflow: hidden; color: var(--branco); padding: clamp(3.5rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 4.5rem);
+    background: radial-gradient(900px 500px at 85% -10%, #1c4a86 0%, transparent 60%), linear-gradient(160deg, var(--navy-950) 0%, var(--navy-900) 55%, #0d2547 100%); }
+  .capa::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); }
+  .capa__inner { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
+  .capa__logo { width: 150px; height: 140px; filter: drop-shadow(0 18px 30px rgba(0,0,0,.45)); }
+  .eyebrow { display: inline-block; font-size: .76rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--ouro-300); padding: .42rem .95rem; border: 1px solid rgba(230,189,74,.35); border-radius: 999px; background: rgba(230,189,74,.08); margin-bottom: 1.25rem; }
+  .capa h1 { color: var(--branco); font-size: clamp(2rem, 5vw, 3.2rem); margin-bottom: .6rem; }
+  .capa .sub { font-size: 1.15rem; color: rgba(255,255,255,.78); max-width: 620px; }
+  .capa__meta { display: flex; flex-wrap: wrap; gap: .6rem 1.5rem; margin-top: 1.5rem; font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+  .capa__meta b { color: var(--ouro-400); font-weight: 800; }
+
+  /* sumário */
+  .sumario { background: var(--navy-950); color: rgba(255,255,255,.8); padding: 1rem 0; border-top: 1px solid rgba(255,255,255,.06); }
+  .sumario ol { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: 0; padding: 0; list-style: none; font-size: .88rem; font-weight: 600; }
+  .sumario a { color: rgba(255,255,255,.78); text-decoration: none; }
+  .sumario a:hover { color: var(--ouro-400); }
+  .sumario li::before { content: counter(item) ". "; counter-increment: item; color: var(--ouro-400); }
+  .sumario ol { counter-reset: item; }
+
+  /* seções */
+  .secao { padding: clamp(2.75rem, 6vw, 4.5rem) 0; }
+  .secao + .secao { border-top: 1px solid var(--areia-200); }
+  .secao--escura { background: linear-gradient(180deg, var(--navy-900), var(--navy-950)); color: rgba(255,255,255,.82); border-top: 0 !important; }
+  .secao--escura h2, .secao--escura h3, .secao--escura strong { color: var(--branco); }
+  .secao--escura .lead { color: rgba(255,255,255,.7); }
+  .rotulo { font-size: .76rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #a67c14; margin-bottom: .8rem; display: flex; align-items: center; gap: .6rem; }
+  .rotulo::before { content: ""; width: 26px; height: 2px; background: var(--ouro-500); border-radius: 2px; }
+  .secao--escura .rotulo { color: var(--ouro-400); }
+  h2 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); margin-bottom: .9rem; }
+  h3 { font-size: 1.18rem; margin-bottom: .5rem; }
+  .lead { font-size: 1.12rem; color: var(--cinza-500); max-width: 760px; }
+
+  .destaque { margin: 1.5rem 0; padding: 1.25rem 1.5rem; border-left: 5px solid var(--ouro-500); background: var(--branco); border-radius: var(--raio-sm); box-shadow: var(--sombra); }
+  .destaque--pastor { border-left-color: var(--navy-900); }
+  .destaque p { font-size: 1.05rem; }
+  .citacao { font-family: var(--fonte-titulo); font-style: italic; font-size: 1.25rem; color: var(--navy-900); }
+  .citacao cite { display: block; font-style: normal; font-family: var(--fonte-texto); font-weight: 800; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: #a67c14; margin-top: .5rem; }
+
+  .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 1.5rem; }
+  .card { background: var(--branco); border: 1px solid var(--areia-200); border-radius: var(--raio); padding: 1.4rem; }
+  .card--vidro { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+  .card--vidro p { color: rgba(255,255,255,.72); }
+  .card h3 { font-family: var(--fonte-texto); font-weight: 700; font-size: 1.05rem; }
+  .card p { font-size: .97rem; color: var(--cinza-500); margin: 0; }
+  .num { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, var(--navy-900), var(--navy-700)); color: var(--ouro-400); font-family: var(--fonte-titulo); font-size: 1.2rem; margin-bottom: .8rem; }
+  .secao--escura .num { background: rgba(230,189,74,.15); border: 1px solid rgba(230,189,74,.4); }
+
+  /* fluxo */
+  .fluxo { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; counter-reset: passo; margin-top: 1.5rem; }
+  .fluxo li { list-style: none; position: relative; background: var(--branco); border: 1px solid var(--areia-200); border-radius: var(--raio); padding: 1.6rem 1.3rem 1.3rem; margin: 0; }
+  .fluxo li::before { counter-increment: passo; content: counter(passo); position: absolute; top: -15px; left: 1.2rem; width: 32px; height: 32px; border-radius: 50%; background: var(--navy-900); color: var(--ouro-400); font-weight: 800; display: grid; place-items: center; font-size: .9rem; border: 3px solid var(--areia-50); }
+  .fluxo h3 { font-family: var(--fonte-texto); font-weight: 700; font-size: 1.02rem; }
+  .fluxo p { font-size: .95rem; color: var(--cinza-500); margin: 0; }
+
+  /* prós e contras */
+  .pc { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+  .pc__coluna { background: var(--branco); border: 1px solid var(--areia-200); border-radius: var(--raio); padding: 1.5rem; border-top: 5px solid var(--verde); }
+  .pc__coluna--contra { border-top-color: var(--vermelho); }
+  .pc__coluna h3 { font-family: var(--fonte-texto); font-weight: 800; font-size: .95rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 1rem; }
+  .pc ul { list-style: none; padding: 0; margin: 0; }
+  .pc li { position: relative; padding-left: 1.7rem; margin-bottom: .75rem; font-size: .98rem; }
+  .pc li::before { content: ""; position: absolute; left: 0; top: .32em; width: 18px; height: 18px; border-radius: 50%; background: var(--verde) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/11px no-repeat; }
+  .pc__coluna--contra li::before { background: var(--vermelho) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M12 6v7M12 17v.5'/%3E%3C/svg%3E") center/11px no-repeat; }
+  .pc li small { display: block; color: var(--cinza-500); font-size: .88rem; margin-top: .1rem; }
+
+  /* tabela */
+  .tabela { overflow-x: auto; margin-top: 1.5rem; border: 1px solid var(--areia-200); border-radius: var(--raio); background: var(--branco); }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: .95rem; }
+  th, td { text-align: left; vertical-align: top; padding: .8rem 1rem; border-bottom: 1px solid var(--areia-200); }
+  th { background: var(--areia-100); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--cinza-500); }
+  tr:last-child td { border-bottom: 0; }
+  .selo { display: inline-block; padding: .18rem .6rem; border-radius: 999px; font-size: .75rem; font-weight: 800; letter-spacing: .04em; }
+  .selo--ok { background: rgba(47,191,113,.14); color: #1a7f4b; }
+  .selo--atencao { background: rgba(245,158,11,.16); color: #9a5b00; }
+  .selo--nao { background: rgba(229,72,77,.12); color: #a12227; }
+
+  /* fases */
+  .fases { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .fase { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--raio); padding: 1.5rem; }
+  .fase__periodo { display: inline-block; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-size: .74rem; color: var(--ouro-400); margin-bottom: .5rem; }
+  .fase h3 { font-size: 1.25rem; }
+  .fase ul { padding-left: 1.1rem; margin: .5rem 0 0; font-size: .95rem; color: rgba(255,255,255,.75); }
+  .fase .meta { margin-top: .9rem; padding-top: .8rem; border-top: 1px dashed rgba(255,255,255,.15); font-size: .9rem; color: var(--ouro-300); font-weight: 700; }
+
+  /* checklist decisão */
+  .decisao { display: grid; gap: .7rem; margin-top: 1.25rem; }
+  .decisao label { display: flex; gap: .9rem; align-items: flex-start; background: var(--branco); border: 1px solid var(--areia-200); border-radius: var(--raio-sm); padding: .9rem 1.1rem; }
+  .decisao input { margin-top: .3rem; width: 20px; height: 20px; accent-color: var(--ouro-500); flex: 0 0 auto; }
+  .decisao span { font-size: .98rem; }
+  .decisao small { display: block; color: var(--cinza-500); font-size: .86rem; }
+
+  .faq details { background: var(--branco); border: 1px solid var(--areia-200); border-radius: var(--raio-sm); padding: .9rem 1.2rem; margin-bottom: .6rem; }
+  .faq summary { cursor: pointer; font-weight: 700; color: var(--navy-900); }
+  .faq details p { margin-top: .6rem; font-size: .96rem; }
+
+  .rodape { background: var(--navy-950); color: rgba(255,255,255,.65); text-align: center; padding: 2.5rem 0 2rem; font-size: .88rem; }
+  .rodape .citacao { color: rgba(255,255,255,.9); }
+  .rodape .citacao cite { color: var(--ouro-400); }
+  .pilares { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 0; margin: 1.2rem 0; padding: 0; list-style: none; }
+  .pilares li { font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; color: rgba(255,255,255,.85); padding: 0 1rem; position: relative; margin: 0; }
+  .pilares li + li::before { content: ""; position: absolute; left: 0; top: 50%; width: 5px; height: 5px; border-radius: 50%; background: var(--ouro-400); transform: translate(-50%,-50%); }
+
+  @media (max-width: 720px) {
+    .capa__inner { grid-template-columns: 1fr; }
+    .capa__logo { width: 110px; height: 102px; order: -1; }
+  }
+  @media print {
+    body { background: #fff; font-size: 12.5px; }
+    .capa, .secao--escura, .rodape, .sumario { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .secao { padding: 1.5rem 0; break-inside: avoid; }
+    .card, .fluxo li, .pc__coluna, .fase { break-inside: avoid; box-shadow: none; }
+    .sumario { display: none; }
+    a::after { content: ""; }
+  }
+</style>
+</head>
+<body>
+
+<header class="capa">
+  <div class="container capa__inner">
+    <div>
+      <span class="eyebrow">Tutorial gerencial · Para o Pr. Elias</span>
+      <h1>Proposta de uso da ferramenta do <span class="grad">Ministério de Mídia</span> ADMoema</h1>
+      <p class="sub">O que a página e o cadastro trazem de facilidades para começar o projeto, o que eles não resolvem, e como propomos usá-los nos próximos 90 dias.</p>
+      <div class="capa__meta">
+        <span><b>Igreja</b> Assembleia de Deus · Ministério do Belém · Setor 124 · Moema</span>
+        <span><b>Leitura</b> cerca de 10 minutos</span>
+      </div>
+    </div>
+    <svg class="capa__logo" viewBox="0 0 1080 1000" aria-hidden="true">
+      <defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="200" y1="150" x2="900" y2="860"><stop offset="0" stop-color="#0db4c8"/><stop offset=".48" stop-color="#8a62a8"/><stop offset="1" stop-color="#e51b86"/></linearGradient></defs>
+      <g fill="none" stroke="url(#g)" stroke-width="88" stroke-linecap="round" stroke-linejoin="round"><path d="M182 186V816"/><path d="M372 186V816"/><path d="M372 204 945 500 372 796Z"/></g>
+      <g fill="url(#g)"><circle cx="182" cy="376" r="92"/><circle cx="372" cy="640" r="92"/></g>
+    </svg>
+  </div>
+</header>
+
+<nav class="sumario" aria-label="Sumário">
+  <div class="container">
+    <ol>
+      <li><a href="#resumo">Em uma frase</a></li>
+      <li><a href="#pedido">O pedido do Pr. Elias</a></li>
+      <li><a href="#como">Como funciona</a></li>
+      <li><a href="#facilidades">Facilidades</a></li>
+      <li><a href="#limites">Limites</a></li>
+      <li><a href="#pros-contras">Prós e contras</a></li>
+      <li><a href="#cuidados">Cuidados</a></li>
+      <li><a href="#fases">Proposta em fases</a></li>
+      <li><a href="#decisoes">O que precisamos decidir</a></li>
+      <li><a href="#faq">Perguntas frequentes</a></li>
+    </ol>
+  </div>
+</nav>
+
+<main>
+
+  <section class="secao" id="resumo">
+    <div class="container">
+      <p class="rotulo">Em uma frase</p>
+      <h2>Uma página na internet que apresenta a proposta do ministério e registra, em um banco de dados, quem pode ajudar e em quê.</h2>
+      <p class="lead">Não é um sistema complexo nem um aplicativo. É um endereço que pode ser enviado pelo WhatsApp. Quem abre, lê a proposta e responde três perguntas. A liderança consulta as respostas em um painel com senha e pode baixar tudo em planilha.</p>
+      <div class="destaque">
+        <p><strong>O que ela resolve de verdade:</strong> hoje não sabemos, de forma organizada, quem na igreja sabe editar vídeo, operar som, fotografar ou programar, quem quer aprender e quem tem um projeto na cabeça. A ferramenta transforma essa pergunta solta em uma lista consultável, com nome e contato, sem depender de caderno, memória ou mensagens perdidas em grupo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="pedido">
+    <div class="container">
+      <p class="rotulo">O pedido do Pr. Elias</p>
+      <h2>Começar pela edição de vídeo das transmissões.</h2>
+      <p class="lead">Na reunião do ministério, a pedido do Pr. Elias, ficou definido que o primeiro passo do Ministério de Multimídia é transformar as transmissões já capturadas em arquivos de vídeo editados, em quatro tipos:</p>
+      <div class="cards">
+        <article class="card"><span class="num">1</span><h3>Pregação</h3><p>A mensagem de cada culto, recortada e identificada, para quem não pôde estar presente.</p></article>
+        <article class="card"><span class="num">2</span><h3>Louvor ministerial</h3><p>Os momentos de louvor conduzidos pelo ministério de louvor da igreja.</p></article>
+        <article class="card"><span class="num">3</span><h3>Louvor individual</h3><p>Participações individuais: cantores, instrumentistas e apresentações especiais.</p></article>
+        <article class="card"><span class="num">4</span><h3>Louvor dos ministérios</h3><p>Coral, crianças, jovens, irmãs e qualquer ministério da ADMoema que ministre em louvor.</p></article>
+      </div>
+      <div class="destaque destaque--pastor" style="margin-top:1.75rem">
+        <p><strong>Como a ferramenta atende a isso:</strong> a página destaca esse pedido logo no início, como ponto de partida do projeto, e o formulário tem um campo obrigatório onde cada pessoa diz se <em>já edita vídeo</em>, <em>quer aprender</em>, <em>tem um projeto específico</em> ou prefere <em>outra frente</em>. O painel mostra essa contagem em separado. Em poucos dias de divulgação teremos a resposta à pergunta que o pastor fez: <strong>quem são as pessoas?</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="como">
+    <div class="container">
+      <p class="rotulo">Como funciona</p>
+      <h2>Quatro passos, sem instalação para ninguém.</h2>
+      <ol class="fluxo">
+        <li><h3>A liderança divulga o link</h3><p>No grupo do ministério, no culto, no Instagram. Ao colar o link no WhatsApp aparece um cartão bonito com a logo.</p></li>
+        <li><h3>A pessoa lê e responde</h3><p>Pelo celular, em 3 minutos: nome, contato, situação em edição de vídeo, frentes de interesse e as três perguntas.</p></li>
+        <li><h3>A resposta fica gravada</h3><p>No banco de dados MySQL da hospedagem da igreja. Também é registrado quantas pessoas visitaram e quantas começaram a responder.</p></li>
+        <li><h3>A liderança consulta</h3><p>Em um painel com senha: totais, quem já edita vídeo, frentes mais marcadas e a lista completa, com download em planilha para o Excel.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao secao--escura" id="facilidades">
+    <div class="container">
+      <p class="rotulo">Facilidades</p>
+      <h2>O que o sistema traz de concreto.</h2>
+      <div class="cards">
+        <article class="card card--vidro"><span class="num">✓</span><h3>Levantamento rápido e organizado</h3><p>Em vez de perguntar um a um, todos respondem no mesmo formato. A lista nasce pronta para ser filtrada.</p></article>
+        <article class="card card--vidro"><span class="num">✓</span><h3>Foco no que o pastor pediu</h3><p>A primeira coisa que o painel mostra é quem edita vídeo, quem quer aprender e quem tem projeto.</p></article>
+        <article class="card card--vidro"><span class="num">✓</span><h3>Apresenta a proposta sozinha</h3><p>A página conta a visão do ministério com clareza. Quem não estava na reunião entende em 5 minutos.</p></article>
+        <article class="card card--vidro"><span class="num">✓</span><h3>Memória do ministério</h3><p>As respostas ficam guardadas com data. Daqui a um ano saberemos quem se ofereceu e para quê.</p></article>
+        <article class="card card--vidro"><span class="num">✓</span><h3>Custo zero de licença</h3><p>Roda na hospedagem que a igreja já tem. Não há mensalidade de software nem aplicativo para pagar.</p></article>
+        <article class="card card--vidro"><span class="num">✓</span><h3>Simples de manter</h3><p>Textos, senha e banco ficam em arquivos legíveis. Qualquer pessoa com noção de informática consegue ajustar.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="limites">
+    <div class="container">
+      <p class="rotulo">Limites · sendo realistas</p>
+      <h2>O que a ferramenta não faz.</h2>
+      <p class="lead">É importante que a expectativa esteja alinhada antes de divulgar. A página é um bom começo, não uma solução completa.</p>
+      <div class="cards">
+        <article class="card"><h3>Não edita vídeo</h3><p>Ela descobre quem pode editar. O trabalho de edição, a organização dos arquivos e o canal de publicação são o passo seguinte, feito por pessoas.</p></article>
+        <article class="card"><h3>Não substitui a conversa</h3><p>Uma resposta de formulário é um convite. Cada pessoa que se oferecer precisa ser chamada, ouvida e acolhida pela liderança.</p></article>
+        <article class="card"><h3>Não avisa sozinha</h3><p>Não há notificação por e-mail ou WhatsApp quando chega uma resposta. Alguém precisa abrir o painel, de preferência toda semana.</p></article>
+        <article class="card"><h3>Não confirma identidade</h3><p>Não há login. Qualquer pessoa com o link pode responder, inclusive duas vezes ou com nome de brincadeira. Na prática, em grupo de igreja, isso é raro, mas pode acontecer.</p></article>
+        <article class="card"><h3>Não gera resultado sem divulgação</h3><p>Se o link não for anunciado no culto e nos grupos, com reforço, poucas pessoas responderão. A ferramenta depende de mobilização.</p></article>
+        <article class="card"><h3>Depende de alguém técnico</h3><p>Para mudar textos ou corrigir um problema na hospedagem, é preciso uma pessoa com acesso ao cPanel. Hoje essa pessoa é uma só, e o próprio princípio do ministério diz que isso precisa mudar.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="pros-contras">
+    <div class="container">
+      <p class="rotulo">Prós e contras</p>
+      <h2>Visão lado a lado.</h2>
+      <div class="pc">
+        <div class="pc__coluna">
+          <h3>Prós</h3>
+          <ul>
+            <li>Responde à pergunta do pastor em dias, não em meses.</li>
+            <li>Sem custo de licença; usa a hospedagem existente.</li>
+            <li>Funciona bem no celular, onde a maioria vai abrir.</li>
+            <li>Dados ficam com a igreja, no banco da própria hospedagem, e podem ser exportados a qualquer momento.</li>
+            <li>Já traz a identidade visual e a apresentação da proposta, úteis também para transmissões e redes.</li>
+            <li>Pode crescer depois (escala da equipe, pedidos de oração) sem jogar nada fora.</li>
+          </ul>
+        </div>
+        <div class="pc__coluna pc__coluna--contra">
+          <h3>Contras</h3>
+          <ul>
+            <li>Exige uma pessoa responsável por olhar o painel e dar retorno. <small>Sem isso, vira uma lista parada.</small></li>
+            <li>Respostas abertas e sem login: precisa de bom senso ao ler. <small>Duplicidades devem ser limpas à mão na planilha.</small></li>
+            <li>Guarda nome e contato: entra na lei de proteção de dados (LGPD). <small>Pede cuidado com a senha do painel e uso restrito à liderança.</small></li>
+            <li>Dependência técnica concentrada em uma pessoa. <small>Recomendamos um segundo responsável com acesso.</small></li>
+            <li>Não há notificações nem lembretes automáticos. <small>Pode ser acrescentado no futuro, se fizer sentido.</small></li>
+            <li>Se a hospedagem cair ou o domínio vencer, a página sai do ar. <small>A igreja já administra isso para o site atual.</small></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Necessidade</th><th>A ferramenta atende?</th><th>Observação</th></tr></thead>
+          <tbody>
+            <tr><td>Saber quem edita vídeo, quer aprender ou tem projeto</td><td><span class="selo selo--ok">Sim</span></td><td>Campo obrigatório e contagem no painel.</td></tr>
+            <tr><td>Mapear as nove frentes do ministério</td><td><span class="selo selo--ok">Sim</span></td><td>Caixas de seleção; ranking das mais marcadas.</td></tr>
+            <tr><td>Guardar contato para chamar as pessoas</td><td><span class="selo selo--ok">Sim</span></td><td>Campo opcional. Recomendamos pedir no culto que preencham.</td></tr>
+            <tr><td>Apresentar a proposta para quem não estava na reunião</td><td><span class="selo selo--ok">Sim</span></td><td>Página completa com as sete partes da proposta.</td></tr>
+            <tr><td>Evitar respostas duplicadas ou falsas</td><td><span class="selo selo--atencao">Parcial</span></td><td>Sem login. Limpeza manual na planilha.</td></tr>
+            <tr><td>Avisar a liderança quando alguém responde</td><td><span class="selo selo--nao">Não</span></td><td>Consulta manual ao painel. Possível evolução futura.</td></tr>
+            <tr><td>Organizar e publicar os vídeos editados</td><td><span class="selo selo--nao">Não</span></td><td>É o trabalho da equipe que será formada a partir das respostas.</td></tr>
+            <tr><td>Montar a escala da equipe</td><td><span class="selo selo--nao">Ainda não</span></td><td>Está no mapa de futuro (60 a 90 dias ou depois).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="cuidados">
+    <div class="container">
+      <p class="rotulo">Cuidados</p>
+      <h2>Três compromissos para usar com responsabilidade.</h2>
+      <div class="cards">
+        <article class="card"><span class="num">1</span><h3>Dados pessoais</h3><p>Nome e contato são dados pessoais. Uso apenas pela liderança do ministério, para organizar as frentes. A página já informa isso a quem responde. A senha do painel não deve circular em grupo.</p></article>
+        <article class="card"><span class="num">2</span><h3>Retorno às pessoas</h3><p>Quem se oferece espera ser chamado. Propomos que toda resposta receba um retorno em até duas semanas, nem que seja um "recebemos, obrigado, em breve conversamos".</p></article>
+        <article class="card"><span class="num">3</span><h3>Continuidade técnica</h3><p>Duas pessoas com acesso à hospedagem e à senha do painel, e uma cópia da planilha baixada todo mês. Nenhuma função deve depender de uma única pessoa.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao secao--escura" id="fases">
+    <div class="container">
+      <p class="rotulo">Proposta de uso</p>
+      <h2>Três fases, alinhadas ao plano de 90 dias da proposta.</h2>
+      <p class="lead">Poucas prioridades, bem feitas. Cada fase tem uma meta simples para sabermos se está funcionando.</p>
+      <div class="fases">
+        <div class="fase">
+          <span class="fase__periodo">0 a 30 dias</span>
+          <h3>Levantar as pessoas</h3>
+          <ul>
+            <li>Aprovação do texto da página pelo pastor.</li>
+            <li>Divulgação do link em dois cultos e nos grupos, com reforço na segunda semana.</li>
+            <li>Um responsável abre o painel toda semana e dá retorno a quem respondeu.</li>
+          </ul>
+          <p class="meta">Meta realista: 20 a 30 respostas e pelo menos 3 pessoas que já editam ou querem aprender.</p>
+        </div>
+        <div class="fase">
+          <span class="fase__periodo">30 a 60 dias</span>
+          <h3>Formar a equipe de edição</h3>
+          <ul>
+            <li>Reunião com quem se identificou em edição de vídeo.</li>
+            <li>Definir padrão simples: nome do arquivo, abertura, onde guardar.</li>
+            <li>Quem sabe ensina quem começa: um encontro prático.</li>
+          </ul>
+          <p class="meta">Meta realista: primeiros 4 vídeos editados (uma pregação, um louvor de cada tipo).</p>
+        </div>
+        <div class="fase">
+          <span class="fase__periodo">60 a 90 dias</span>
+          <h3>Rotina e próximos passos</h3>
+          <ul>
+            <li>Edição semanal das transmissões com titular, apoio e aprendiz.</li>
+            <li>Avaliar com o pastor o que vem depois: escala da equipe, pedidos de oração.</li>
+            <li>Segundo levantamento com as respostas acumuladas.</li>
+          </ul>
+          <p class="meta">Meta realista: vídeos publicados toda semana sem depender de uma só pessoa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="decisoes">
+    <div class="container">
+      <p class="rotulo">O que precisamos do Pr. Elias</p>
+      <h2>Cinco decisões para começar.</h2>
+      <div class="decisao">
+        <label><input type="checkbox"><span><strong>Aprovar o texto da página</strong><small>Especialmente a seção que cita o pedido do pastor e o texto sobre uso dos dados.</small></span></label>
+        <label><input type="checkbox"><span><strong>Autorizar a divulgação</strong><small>Anúncio no culto e envio do link nos grupos oficiais da igreja.</small></span></label>
+        <label><input type="checkbox"><span><strong>Indicar o responsável pelo painel</strong><small>Quem abre as respostas toda semana e dá retorno às pessoas. Pode ser o líder do ministério.</small></span></label>
+        <label><input type="checkbox"><span><strong>Indicar o segundo acesso técnico</strong><small>Uma segunda pessoa com a senha do painel e acesso à hospedagem, por continuidade.</small></span></label>
+        <label><input type="checkbox"><span><strong>Marcar a data de avaliação</strong><small>Um encontro curto em 30 dias para olhar os números e decidir a fase seguinte.</small></span></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao faq" id="faq">
+    <div class="container">
+      <p class="rotulo">Perguntas frequentes</p>
+      <h2>Dúvidas que costumam surgir.</h2>
+      <details><summary>Quanto custa manter?</summary><p>Nada além da hospedagem e do domínio que a igreja já paga. Não há licença de software. O custo real é o tempo voluntário de quem cuida do painel e da equipe de edição.</p></details>
+      <details><summary>Onde ficam as respostas? Alguém de fora pode ver?</summary><p>No banco de dados MySQL da hospedagem da igreja, protegido por usuário e senha. O painel exige a senha da liderança. As respostas não ficam visíveis na página pública.</p></details>
+      <details><summary>E se alguém responder errado ou duas vezes?</summary><p>A liderança vê tudo em lista, com data. Basta ignorar ou limpar na planilha. Não há mecanismo automático para isso, e para um grupo de igreja isso costuma bastar.</p></details>
+      <details><summary>Dá para mudar as perguntas depois?</summary><p>Sim. Textos e opções ficam em arquivos simples. Mudanças pequenas levam minutos; mudanças de estrutura, algumas horas.</p></details>
+      <details><summary>Quem não tem celular ou não quer usar a internet?</summary><p>A liderança pode preencher pela pessoa, no próprio painel, a partir de uma conversa ou de um papel. A ferramenta organiza; não exclui.</p></details>
+      <details><summary>Isso é o "sistema" completo do ministério?</summary><p>Não. É o primeiro tijolo. Serve para descobrir as pessoas e começar a edição de vídeo, que foi o pedido do pastor. Os projetos maiores citados na proposta vêm depois, um ou dois por vez.</p></details>
+    </div>
+  </section>
+
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <p class="citacao">“Mas faça-se tudo decentemente e com ordem.”<cite>1 Coríntios 14:40</cite></p>
+    <ul class="pilares"><li>Servir</li><li>Comunicar</li><li>Capacitar</li><li>Evangelizar</li></ul>
+    <p>Ministério de Mídia ADMoema · Assembleia de Deus – Ministério do Belém · Setor 124 · Moema</p>
+  </div>
+</footer>
+
+</body>
+</html>
